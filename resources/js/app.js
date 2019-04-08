@@ -1,4 +1,3 @@
-
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -13,8 +12,10 @@ import App from './App.vue'
 import router from './router'
 // index.js or main.js
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
+import VeeValidate from 'vee-validate';
 
 Vue.use(Vuetify)
+Vue.use(VeeValidate)
 
 /**
  * The following block of code may be used to automatically register your
@@ -41,5 +42,5 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 new Vue({
     router,
     render: h => h(App)
-  }).$mount('#app')
+}).$mount('#app')
   
