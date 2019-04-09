@@ -2,7 +2,7 @@
     <v-layout align-start>
         <v-flex>
             <v-toolbar flat color="white">
-                <v-toolbar-title>Employee</v-toolbar-title>
+                <v-toolbar-title>List of Tickets</v-toolbar-title>
                 <v-divider class="mx-2" inset vertical></v-divider>
                 <v-spacer></v-spacer>
                 <v-text-field
@@ -15,7 +15,7 @@
                 ></v-text-field>
                 <v-spacer></v-spacer>
                 <v-dialog v-model="dialog" max-width="500px">
-                    <v-btn slot="activator" color="primary" dark class="mb-2">New</v-btn>
+                    <v-btn slot="activator" color="primary" dark class="mb-2">Create Ticket</v-btn>
                     <v-card>
                         <v-card-title>
                             <span class="headline">{{ formTitle }}</span>
@@ -26,29 +26,37 @@
                                     <v-flex xs12 sm6 md6>
                                         <v-text-field
                                                 v-validate="'required'"
-                                                data-vv-name="first_name"
-                                                :error-messages="errors.collect('first_name')"
-                                                v-model="employee.first_name"
-                                                label="First Name"
+                                                data-vv-name="subject"
+                                                :error-messages="errors.collect('subject')"
+                                                v-model="ticket.subject"
+                                                label="Subject"
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex xs12 sm6 md6>
                                         <v-text-field
-                                                v-model="employee.last_name"
+                                                v-model="ticket.date"
                                                 v-validate="'required'"
-                                                data-vv-name="last_name"
-                                                :error-messages="errors.collect('last_name')"
-                                                label="Last Name">
+                                                data-vv-name="date"
+                                                :error-messages="errors.collect('date')"
+                                                label="Date">
                                         </v-text-field>
                                     </v-flex>
                                     <v-flex xs12 sm6 md6>
                                         <v-text-field
-                                                v-model="employee.email"
-                                                v-validate="'required|email'"
-                                                data-vv-name="email"
-                                                :error-messages="errors.collect('email')"
-                                                label="Email"
+                                                v-model="ticket.employees"
+                                                v-validate="'required'"
+                                                data-vv-name="employee"
+                                                :error-messages="errors.collect('employee')"
+                                                label="Employess"
                                         ></v-text-field>
+                                        <v-flex xs12>
+                                            <v-combobox
+                                                    v-model="select"
+                                                    :items="items"
+                                                    label="Select a favorite activity or create a new one"
+                                                    multiple
+                                            ></v-combobox>
+                                        </v-flex>
                                     </v-flex>
                                     <v-flex xs12 sm6 md6>
                                         <v-select
@@ -127,19 +135,33 @@
         },
         data() {
             return {
-                clientes: [],
                 employees: [],
                 dialog: false,
                 headers: [
-                    {text: "First Name", value: "first_name"},
-                    {text: "Last Name", value: "last_name"},
-                    {text: "Email", value: "email"},
-                    {text: "Date Created", value: "create_at", sortable: false},
+                    {text: "#", value: "#"},
+                    {text: "Description", value: "description"},
+                    {text: "Employee", value: "employee"},
+                    {text: "Date", value: "date", sortable: false},
                     {text: "Status", value: "status_id", sortable: false},
                     {text: "Actions", value: "actions", sortable: false},
                 ],
                 search: "",
                 editedIndex: -1,
+                ticket: {
+                    id: 0,
+                    subject: '',
+                    employees: [],
+                    date: '',
+                    status_id: null,
+                    description: '',
+                },
+                select: ['Vuetify', 'Programming'],
+                items: [
+                    'Programming',
+                    'Design',
+                    'Vue',
+                    'Vuetify'
+                ],
                 employee: {
                     id: 0,
                     first_name: "",
@@ -179,7 +201,7 @@
             }
         },
         created() {
-            this.list();
+            // this.list();
         },
         methods: {
             list() {

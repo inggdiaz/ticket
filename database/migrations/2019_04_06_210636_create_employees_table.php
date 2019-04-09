@@ -18,7 +18,7 @@ class CreateEmployeesTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->integer('status_id');
-            $table->integer('email');
+            $table->string('email');
             $table->string('password');
             $table->timestamps();
         });

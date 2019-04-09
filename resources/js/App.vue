@@ -8,7 +8,7 @@
     >
       <v-list dense>
         <template>
-          <v-list-tile :to="{name:''}">
+          <v-list-tile :to="{name:'employee'}">
             <v-list-tile-action>
               <v-icon>people</v-icon>
             </v-list-tile-action>
@@ -18,7 +18,7 @@
           </v-list-tile>
         </template>
         <template>
-          <v-list-tile :to="{name:''}">
+          <v-list-tile :to="{name:'ticket'}">
             <v-list-tile-action>
               <v-icon>table_chart</v-icon>
             </v-list-tile-action>

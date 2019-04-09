@@ -31,19 +31,26 @@ class EmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
-        $employee = new Employee();
+        $employee = ($request->input('id') > 0) ? Employee::find($request->input('id')) : new Employee();
+        $employee->first_name = $request->input('first_name');
+        $employee->last_name = $request->input('last_name');
+        $employee->email = $request->input('email');
+        $employee->status_id = $request->input('status');
+        if ($request->input('change_password') == '1') {
+            $employee->password = md5($request->input('password'));
+        }
+        $employee->save();
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -54,7 +61,7 @@ class EmployeeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -65,8 +72,8 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -77,7 +84,7 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
