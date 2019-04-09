@@ -9,13 +9,13 @@
           class="text-xs-center"
           v-model="search"
           append-icon="search"
-          label="Búsqueda"
+          label="Search"
           single-line
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
-          <v-btn slot="activator" color="primary" dark class="mb-2">Nuevo</v-btn>
+          <v-btn slot="activator" color="primary" dark class="mb-2">New</v-btn>
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
@@ -24,24 +24,60 @@
             <v-card-text>
               <v-container grid-list-md>
                 <v-layout wrap>
-                  <v-flex xs12 sm12 md12>
-                    <v-text-field v-model="nombre" label="Nombre"></v-text-field>
+                  <v-flex xs12 sm6 md6>
+                    <v-text-field
+                      v-validate="'required'"
+                      data-vv-name="first_name"
+                      :error-messages="errors.collect('first_name')"
+                      v-model="employee.first_name"
+                      label="First Name"
+                    ></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm6 md6>
-                    <v-select v-model="tipo_documento" :items="documentos" label="Tipo Documento"></v-select>
+                    <v-text-field v-model="employee.last_name" label="Last Name"></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm6 md6>
-                    <v-text-field v-model="num_documento" label="Número Documento"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm12 md12>
-                    <v-text-field v-model="direccion" label="Dirección"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md6>
-                    <v-text-field v-model="telefono" label="Teléfono"></v-text-field>
+                    <v-text-field
+                      v-model="employee.email"
+                      :rules="[rules.required, rules.email]"
+                      label="Email"
+                    ></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm6 md6>
-                    <v-text-field v-model="email" label="Email"></v-text-field>
+                    <v-select
+                      item-text="name"
+                      item-value="id"
+                      v-model="employee.status"
+                      :items="status"
+                      label="Status"
+                    ></v-select>
                   </v-flex>
+                  <v-flex xs12 sm6 md6>
+                    <v-text-field
+                      v-validate="'required'"
+                      ref="password"
+                      data-vv-name="password"
+                      :type="'password'"
+                      :error-messages="errors.collect('password')"
+                      v-model="employee.password"
+                      label="Password"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 md6>
+                    <v-text-field
+                      v-validate="'required|confirmed:password'"
+                      :type="'password'"
+                      data-vv-as="password"
+                      :error-messages="errors.collect('confirm_password')"
+                      data-vv-name="confirm_password"
+                      v-model="employee.confirm_password"
+                      label="Confirm Password"
+                    ></v-text-field>
+                  </v-flex>
+                  <!--                                    <v-flex xs12 sm6 md6>-->
+                  <!--                                        <v-select v-model="tipo_documento" :items="documentos" label="Tipo Documento"></v-select>-->
+                  <!--                                    </v-flex>-->
                   <v-flex xs12 sm12 md12 v-show="valida">
                     <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
                   </v-flex>
@@ -57,18 +93,16 @@
           </v-card>
         </v-dialog>
       </v-toolbar>
-      <v-data-table :headers="headers" :items="clientes" :search="search" class="elevation-1">
+      <v-data-table :headers="headers" :items="employees" :search="search" class="elevation-1">
         <template slot="items" slot-scope="props">
+          <td>{{ props.item.first_name }}</td>
+          <td>{{ props.item.last_name }}</td>
+          <td>{{ props.item.email }}</td>
+          <td>{{ props.item.created_at }}</td>
+          <td>{{ props.item.status_id === 1 ? 'Active': 'Disable' }}</td>
           <td class="justify-center layout px-0">
             <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
           </td>
-          <td>{{ props.item.nombre }}</td>
-          <td>{{ props.item.tipo_persona }}</td>
-          <td>{{ props.item.tipo_documento }}</td>
-          <td>{{ props.item.num_documento }}</td>
-          <td>{{ props.item.direccion }}</td>
-          <td>{{ props.item.telefono }}</td>
-          <td>{{ props.item.email }}</td>
         </template>
         <template slot="no-data">
           <v-btn color="primary" @click="listar">Resetear</v-btn>
@@ -79,26 +113,48 @@
 </template>
 <script>
 import axios from "axios";
+
+// Vue.use(VeeValidate);
 export default {
+  $_veeValidate: {
+    validator: "new"
+  },
   data() {
     return {
       clientes: [],
+      employees: [],
       dialog: false,
       headers: [
-        { text: "Opciones", value: "opciones", sortable: false },
-        { text: "Nombre", value: "nombre" },
-        { text: "Tipo Persona", value: "tipo_persona" },
-        { text: "Tipo Documento", value: "tipo_documento" },
-        { text: "Número Documento", value: "num_documento", sortable: false },
-        { text: "Dirección", value: "direccion", sortable: false },
-        { text: "Teléfono", value: "telefono", sortable: false },
-        { text: "Email", value: "email", sortable: false }
+        { text: "First Name", value: "first_name" },
+        { text: "Last Name", value: "last_name" },
+        { text: "Email", value: "email" },
+        { text: "Date Created", value: "create_at", sortable: false },
+        { text: "Status", value: "status_id", sortable: false },
+        { text: "Actions", value: "actions", sortable: false },
       ],
       search: "",
       editedIndex: -1,
+      employee: {
+        id: 0,
+        first_name: "",
+        last_name: "",
+        email: "",
+        status: 0,
+        password: "",
+        confirm_password: ""
+      },
+      rules: {
+        required: value => !!value || "Required.",
+        counter: value => value.length <= 20 || "Max 20 characters",
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          return pattern.test(value) || "Invalid e-mail.";
+        }
+      },
       id: "",
       nombre: "",
       tipo_documento: "",
+      status: [{ id: 1, name: "Active" }, { id: 2, name: "Disable" }],
       documentos: ["DNI", "RUC", "PASAPORTE", "CEDULA"],
       num_documento: "",
       direccion: "",
@@ -125,9 +181,20 @@ export default {
   },
 
   created() {
-    // this.listar();
+    this.list();
   },
   methods: {
+    list() {
+      let self = this;
+      axios
+        .get("api/employee/all")
+        .then(function(response) {
+          self.employees = response.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
     listar() {
       let me = this;
       let header = { Authorization: "Bearer " + this.$store.state.token };
@@ -143,13 +210,14 @@ export default {
         });
     },
     editItem(item) {
-      this.id = item.idpersona;
-      this.nombre = item.nombre;
-      this.tipo_documento = item.tipo_documento;
-      this.num_documento = item.num_documento;
-      this.direccion = item.direccion;
-      this.telefono = item.telefono;
-      this.email = item.email;
+      this.employee = item;
+      // this.id = item.idpersona;
+      // this.nombre = item.nombre;
+      // this.tipo_documento = item.tipo_documento;
+      // this.num_documento = item.num_documento;
+      // this.direccion = item.direccion;
+      // this.telefono = item.telefono;
+      // this.email = item.email;
       this.editedIndex = 1;
       this.dialog = true;
     },
@@ -158,16 +226,17 @@ export default {
       this.limpiar();
     },
     limpiar() {
-      this.id = "";
-      this.nombre = "";
-      this.tipo_documento = "";
-      this.num_documento = "";
-      this.direccion = "";
-      this.telefono = "";
-      this.email = "";
+      this.employee.id = "";
+      this.employee.first_name = "";
+      this.employee.last_name = "";
+      this.employee.employee = "";
+      this.employee.password = "";
+      this.employee.confirm_password = "";
       this.editedIndex = -1;
     },
     guardar() {
+      this.$validator.validateAll();
+      return;
       if (this.validar()) {
         return;
       }

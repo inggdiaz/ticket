@@ -20,3 +20,11 @@ use Illuminate\Http\Request;
 Route::get('/test', function(){
 // echo "Tessst";
 });
+
+Route::group([
+    'prefix' => 'employee',
+], function () {
+    Route::get('all', 'EmployeeController@index');
+//    Route::get('get', 'Apps@get');
+//    Route::post('add', 'Apps@create');
+});
