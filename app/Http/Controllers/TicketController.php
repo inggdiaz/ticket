@@ -2,24 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Employee;
+use App\Ticket;
+use App\TicketEmployee;
 use Illuminate\Http\Request;
 
-class EmployeeController extends Controller
+class TicketController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return Employee[]
+     * @return \App\Ticket[]|\Illuminate\Database\Eloquent\Collection
      */
     public function index()
     {
         //
-        $employees = Employee::all();
-        foreach ($employees as $index => $employee) {
-            $employee->name = $employee->first_name . ' ' . $employee->last_name;
+        $tickets = \App\Ticket::all();
+        foreach ($tickets as $ticket) {
+            $ticket->assign;
+            foreach ($ticket->assign as $index => $employee) {
+                $employee->employee;
+            }
+            $ticket->status;
         }
-        return $employees;
+        return $tickets;
+    }
+
+    /**
+     * @return \App\Status[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function status()
+    {
+        return \App\Status::all();
     }
 
     /**
@@ -40,15 +53,22 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        $employee = ($request->input('id') > 0) ? Employee::find($request->input('id')) : new Employee();
-        $employee->first_name = $request->input('first_name');
-        $employee->last_name = $request->input('last_name');
-        $employee->email = $request->input('email');
-        $employee->status_id = $request->input('status');
-        if ($request->input('change_password') == '1') {
-            $employee->password = md5($request->input('password'));
+        //
+        $employees = (object)$request->input('employees');
+        $ticket = ($request->input('id') > 0) ? Ticket::find($request->input('id')) : new Ticket();
+        $ticket->subject = $request->input('subject');
+        $ticket->date = $request->input('date');
+        $ticket->status_id = $request->input('status_id');
+        $ticket->description = $request->input('description');
+        $ticket->save();
+        foreach ($employees as $employee) {
+            $employee = (object)$employee;
+            //todo Condition save/remove
+            $assign = new TicketEmployee();
+            $assign->employee_id = $employee->id;
+            $assign->ticket_id = $ticket->id;
+            $assign->save();
         }
-        $employee->save();
     }
 
     /**

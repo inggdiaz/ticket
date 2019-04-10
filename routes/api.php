@@ -17,13 +17,20 @@ use Illuminate\Http\Request;
 //     return $request->user();
 // });
 
-Route::get('/test', function(){
-});
-
 Route::group([
     'prefix' => 'employee',
 ], function () {
     Route::get('all', 'EmployeeController@index');
     Route::post('add', 'EmployeeController@store');
     Route::put('add', 'EmployeeController@store');
+});
+
+
+Route::group([
+    'prefix' => 'ticket',
+], function () {
+    Route::get('all', 'TicketController@index');
+    Route::get('status', 'TicketController@status');
+    Route::post('add', 'TicketController@store');
+    Route::put('add', 'TicketController@store');
 });

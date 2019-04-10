@@ -33,36 +33,56 @@
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex xs12 sm6 md6>
-                                        <v-text-field
-                                                v-model="ticket.date"
-                                                v-validate="'required'"
-                                                data-vv-name="date"
-                                                :error-messages="errors.collect('date')"
-                                                label="Date">
-                                        </v-text-field>
+                                        <v-menu
+                                                ref="menu"
+                                                v-model="menu"
+                                                :close-on-content-click="false"
+                                                :nudge-right="40"
+                                                :return-value.sync="ticket.date"
+                                                lazy
+                                                transition="scale-transition"
+                                                offset-y
+                                                full-width
+                                                min-width="290px"
+                                        >
+                                            <template v-slot:activator="{ on }">
+                                                <v-text-field
+                                                        v-model="ticket.date"
+                                                        v-validate="'required'"
+                                                        data-vv-name="date"
+                                                        :error-messages="errors.collect('date')"
+                                                        label="Date"
+                                                        prepend-icon="event"
+                                                        readonly
+                                                        v-on="on"
+                                                ></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="ticket.date" no-title scrollable>
+                                                <v-spacer></v-spacer>
+                                                <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                                                <v-btn flat color="primary" @click="$refs.menu.save(ticket.date)">OK
+                                                </v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
                                     </v-flex>
                                     <v-flex xs12 sm6 md6>
-                                        <v-text-field
+                                        <v-combobox
+                                                item-text="name"
+                                                item-value="id"
                                                 v-model="ticket.employees"
                                                 v-validate="'required'"
-                                                data-vv-name="employee"
-                                                :error-messages="errors.collect('employee')"
-                                                label="Employess"
-                                        ></v-text-field>
-                                        <v-flex xs12>
-                                            <v-combobox
-                                                    v-model="select"
-                                                    :items="items"
-                                                    label="Select a favorite activity or create a new one"
-                                                    multiple
-                                            ></v-combobox>
-                                        </v-flex>
+                                                data-vv-name="employees"
+                                                :error-messages="errors.collect('employees')"
+                                                :items="employees"
+                                                label="Select Employee(s)..."
+                                                multiple
+                                        ></v-combobox>
                                     </v-flex>
                                     <v-flex xs12 sm6 md6>
                                         <v-select
                                                 item-text="name"
                                                 item-value="id"
-                                                v-model="employee.status"
+                                                v-model="ticket.status_id"
                                                 v-validate="'required'"
                                                 data-vv-name="select"
                                                 :items="status"
@@ -71,29 +91,19 @@
                                                 label="Status"
                                         ></v-select>
                                     </v-flex>
-                                    <v-flex xs12 sm6 md6>
-                                        <v-text-field
+                                    <v-flex xs12 sm12 md12>
+                                        <v-textarea
                                                 v-validate="'required'"
-                                                ref="password"
-                                                data-vv-name="password"
-                                                :type="'password'"
-                                                :error-messages="errors.collect('password')"
-                                                v-model="employee.password"
-                                                label="Password"
-                                        ></v-text-field>
+                                                data-vv-name="description"
+                                                :error-messages="errors.collect('description')"
+                                                v-model="ticket.description"
+                                                solo
+                                                name="input-7-4"
+                                                label="Description"
+                                                value=""
+                                        ></v-textarea>
                                     </v-flex>
 
-                                    <v-flex xs12 sm6 md6>
-                                        <v-text-field
-                                                v-validate="'required|confirmed:password'"
-                                                :type="'password'"
-                                                data-vv-as="password"
-                                                :error-messages="errors.collect('confirm_password')"
-                                                data-vv-name="confirm_password"
-                                                v-model="employee.confirm_password"
-                                                label="Confirm Password"
-                                        ></v-text-field>
-                                    </v-flex>
                                     <v-flex xs12 sm12 md12 v-show="valida">
                                         <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
                                     </v-flex>
@@ -108,13 +118,15 @@
                     </v-card>
                 </v-dialog>
             </v-toolbar>
-            <v-data-table :headers="headers" :items="employees" :search="search" class="elevation-1">
+            <v-data-table :headers="headers" :items="tickets" :search="search" class="elevation-1">
                 <template slot="items" slot-scope="props">
-                    <td>{{ props.item.first_name }}</td>
-                    <td>{{ props.item.last_name }}</td>
-                    <td>{{ props.item.email }}</td>
-                    <td>{{ props.item.created_at }}</td>
-                    <td>{{ props.item.status_id === 1 ? 'Active': 'Disable' }}</td>
+                    <td>{{ props.item.id }}</td>
+                    <td>{{ props.item.description }}</td>
+                    <td>
+                        <v-chip v-for="assign in props.item.assign">{{assign.employee.first_name}} {{assign.employee.last_name}}</v-chip>
+                    </td>
+                    <td>{{ props.item.date}}</td>
+                    <td>{{ props.item.status.name}}</td>
                     <td class="justify-center layout px-0">
                         <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
                     </td>
@@ -136,11 +148,12 @@
         data() {
             return {
                 employees: [],
+                tickets: [],
                 dialog: false,
                 headers: [
                     {text: "#", value: "#"},
                     {text: "Description", value: "description"},
-                    {text: "Employee", value: "employee"},
+                    {text: "Employee(s)", value: "employee"},
                     {text: "Date", value: "date", sortable: false},
                     {text: "Status", value: "status_id", sortable: false},
                     {text: "Actions", value: "actions", sortable: false},
@@ -155,12 +168,13 @@
                     status_id: null,
                     description: '',
                 },
-                select: ['Vuetify', 'Programming'],
+                menu: false,
+                date: new Date().toISOString().substr(0, 10),
+                select: [],
                 items: [
-                    'Programming',
-                    'Design',
-                    'Vue',
-                    'Vuetify'
+                    {id: 1, name: 'Geronimo Diaz'},
+                    {id: 2, name: 'Daniel Diaz'},
+                    {id: 3, name: 'Ana Diaz'},
                 ],
                 employee: {
                     id: 0,
@@ -176,7 +190,7 @@
                 id: "",
                 nombre: "",
                 tipo_documento: "",
-                status: [{id: 1, name: "Active"}, {id: 2, name: "Disable"}],
+                status: [],
                 documentos: ["DNI", "RUC", "PASAPORTE", "CEDULA"],
                 num_documento: "",
                 direccion: "",
@@ -201,19 +215,31 @@
             }
         },
         created() {
-            // this.list();
+            this.list();
+            this.listEmployee();
+            this.listStatus();
         },
         methods: {
             list() {
                 let self = this;
                 axios
-                    .get("api/employee/all")
+                    .get("api/ticket/all")
                     .then(function (response) {
-                        self.employees = response.data;
+                        self.tickets = response.data;
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
+            },
+            listEmployee() {
+                axios.get('api/employee/all').then(response => {
+                    this.employees = response.data;
+                });
+            },
+            listStatus() {
+                axios.get('api/ticket/status').then(response => {
+                    this.status = response.data;
+                });
             },
             editItem(item) {
                 this.employee.id = item.id;
@@ -232,21 +258,22 @@
                 this.cleanForm();
             },
             cleanForm() {
-                this.employee.id = "";
-                this.employee.first_name = "";
-                this.employee.last_name = "";
-                this.employee.employee = "";
-                this.employee.password = "";
-                this.employee.confirm_password = "";
+                this.ticket.id = "";
+                this.ticket.subject = "";
+                this.ticket.description = "";
+                this.ticket.date = "";
+                this.ticket.status_id = null;
                 this.editedIndex = -1;
             },
             save() {
                 let self = this;
+                console.log(this.ticket);
+                // return;
                 this.$validator.validateAll().then(result => {
                     if (result) {
                         if (self.employee.id > 0) {
                             self.employee.change_password = (self.employee.old_password === self.employee.password) ? 0 : 1;
-                            axios.put('api/employee/add', self.employee).then(response => {
+                            axios.put('api/ticket/add', self.ticket).then(response => {
                                 self.close();
                                 self.list();
                                 self.cleanForm();
@@ -255,8 +282,7 @@
                                 console.log(response);
                             });
                         } else {
-                            axios.post('api/employee/add', self.employee).then(response => {
-                                console.log(response);
+                            axios.post('api/ticket/add', self.ticket).then(response => {
                                 self.close();
                                 self.list();
                                 self.cleanForm();

@@ -2430,6 +2430,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   $_veeValidate: {
@@ -2438,6 +2450,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       employees: [],
+      tickets: [],
       dialog: false,
       headers: [{
         text: "#",
@@ -2446,7 +2459,7 @@ __webpack_require__.r(__webpack_exports__);
         text: "Description",
         value: "description"
       }, {
-        text: "Employee",
+        text: "Employee(s)",
         value: "employee"
       }, {
         text: "Date",
@@ -2471,8 +2484,19 @@ __webpack_require__.r(__webpack_exports__);
         status_id: null,
         description: ''
       },
-      select: ['Vuetify', 'Programming'],
-      items: ['Programming', 'Design', 'Vue', 'Vuetify'],
+      menu: false,
+      date: new Date().toISOString().substr(0, 10),
+      select: [],
+      items: [{
+        id: 1,
+        name: 'Geronimo Diaz'
+      }, {
+        id: 2,
+        name: 'Daniel Diaz'
+      }, {
+        id: 3,
+        name: 'Ana Diaz'
+      }],
       employee: {
         id: 0,
         first_name: "",
@@ -2487,13 +2511,7 @@ __webpack_require__.r(__webpack_exports__);
       id: "",
       nombre: "",
       tipo_documento: "",
-      status: [{
-        id: 1,
-        name: "Active"
-      }, {
-        id: 2,
-        name: "Disable"
-      }],
+      status: [],
       documentos: ["DNI", "RUC", "PASAPORTE", "CEDULA"],
       num_documento: "",
       direccion: "",
@@ -2517,15 +2535,32 @@ __webpack_require__.r(__webpack_exports__);
       val || this.close();
     }
   },
-  created: function created() {// this.list();
+  created: function created() {
+    this.list();
+    this.listEmployee();
+    this.listStatus();
   },
   methods: {
     list: function list() {
       var self = this;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("api/employee/all").then(function (response) {
-        self.employees = response.data;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("api/ticket/all").then(function (response) {
+        self.tickets = response.data;
       })["catch"](function (error) {
         console.log(error);
+      });
+    },
+    listEmployee: function listEmployee() {
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('api/employee/all').then(function (response) {
+        _this.employees = response.data;
+      });
+    },
+    listStatus: function listStatus() {
+      var _this2 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('api/ticket/status').then(function (response) {
+        _this2.status = response.data;
       });
     },
     editItem: function editItem(item) {
@@ -2545,21 +2580,22 @@ __webpack_require__.r(__webpack_exports__);
       this.cleanForm();
     },
     cleanForm: function cleanForm() {
-      this.employee.id = "";
-      this.employee.first_name = "";
-      this.employee.last_name = "";
-      this.employee.employee = "";
-      this.employee.password = "";
-      this.employee.confirm_password = "";
+      this.ticket.id = "";
+      this.ticket.subject = "";
+      this.ticket.description = "";
+      this.ticket.date = "";
+      this.ticket.status_id = null;
       this.editedIndex = -1;
     },
     save: function save() {
       var self = this;
+      console.log(this.ticket); // return;
+
       this.$validator.validateAll().then(function (result) {
         if (result) {
           if (self.employee.id > 0) {
             self.employee.change_password = self.employee.old_password === self.employee.password ? 0 : 1;
-            axios__WEBPACK_IMPORTED_MODULE_0___default.a.put('api/employee/add', self.employee).then(function (response) {
+            axios__WEBPACK_IMPORTED_MODULE_0___default.a.put('api/ticket/add', self.ticket).then(function (response) {
               self.close();
               self.list();
               self.cleanForm();
@@ -2568,8 +2604,7 @@ __webpack_require__.r(__webpack_exports__);
               console.log(response);
             });
           } else {
-            axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/employee/add', self.employee).then(function (response) {
-              console.log(response);
+            axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/ticket/add', self.ticket).then(function (response) {
               self.close();
               self.list();
               self.cleanForm();
@@ -32779,30 +32814,169 @@ var render = function() {
                                     "v-flex",
                                     { attrs: { xs12: "", sm6: "", md6: "" } },
                                     [
-                                      _c("v-text-field", {
-                                        directives: [
-                                          {
-                                            name: "validate",
-                                            rawName: "v-validate",
-                                            value: "required",
-                                            expression: "'required'"
-                                          }
-                                        ],
-                                        attrs: {
-                                          "data-vv-name": "date",
-                                          "error-messages": _vm.errors.collect(
-                                            "date"
-                                          ),
-                                          label: "Date"
-                                        },
-                                        model: {
-                                          value: _vm.ticket.date,
-                                          callback: function($$v) {
-                                            _vm.$set(_vm.ticket, "date", $$v)
+                                      _c(
+                                        "v-menu",
+                                        {
+                                          ref: "menu",
+                                          attrs: {
+                                            "close-on-content-click": false,
+                                            "nudge-right": 40,
+                                            "return-value": _vm.ticket.date,
+                                            lazy: "",
+                                            transition: "scale-transition",
+                                            "offset-y": "",
+                                            "full-width": "",
+                                            "min-width": "290px"
                                           },
-                                          expression: "ticket.date"
-                                        }
-                                      })
+                                          on: {
+                                            "update:returnValue": function(
+                                              $event
+                                            ) {
+                                              return _vm.$set(
+                                                _vm.ticket,
+                                                "date",
+                                                $event
+                                              )
+                                            },
+                                            "update:return-value": function(
+                                              $event
+                                            ) {
+                                              return _vm.$set(
+                                                _vm.ticket,
+                                                "date",
+                                                $event
+                                              )
+                                            }
+                                          },
+                                          scopedSlots: _vm._u([
+                                            {
+                                              key: "activator",
+                                              fn: function(ref) {
+                                                var on = ref.on
+                                                return [
+                                                  _c(
+                                                    "v-text-field",
+                                                    _vm._g(
+                                                      {
+                                                        directives: [
+                                                          {
+                                                            name: "validate",
+                                                            rawName:
+                                                              "v-validate",
+                                                            value: "required",
+                                                            expression:
+                                                              "'required'"
+                                                          }
+                                                        ],
+                                                        attrs: {
+                                                          "data-vv-name":
+                                                            "date",
+                                                          "error-messages": _vm.errors.collect(
+                                                            "date"
+                                                          ),
+                                                          label: "Date",
+                                                          "prepend-icon":
+                                                            "event",
+                                                          readonly: ""
+                                                        },
+                                                        model: {
+                                                          value:
+                                                            _vm.ticket.date,
+                                                          callback: function(
+                                                            $$v
+                                                          ) {
+                                                            _vm.$set(
+                                                              _vm.ticket,
+                                                              "date",
+                                                              $$v
+                                                            )
+                                                          },
+                                                          expression:
+                                                            "ticket.date"
+                                                        }
+                                                      },
+                                                      on
+                                                    )
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ]),
+                                          model: {
+                                            value: _vm.menu,
+                                            callback: function($$v) {
+                                              _vm.menu = $$v
+                                            },
+                                            expression: "menu"
+                                          }
+                                        },
+                                        [
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-date-picker",
+                                            {
+                                              attrs: {
+                                                "no-title": "",
+                                                scrollable: ""
+                                              },
+                                              model: {
+                                                value: _vm.ticket.date,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.ticket,
+                                                    "date",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "ticket.date"
+                                              }
+                                            },
+                                            [
+                                              _c("v-spacer"),
+                                              _vm._v(" "),
+                                              _c(
+                                                "v-btn",
+                                                {
+                                                  attrs: {
+                                                    flat: "",
+                                                    color: "primary"
+                                                  },
+                                                  on: {
+                                                    click: function($event) {
+                                                      _vm.menu = false
+                                                    }
+                                                  }
+                                                },
+                                                [_vm._v("Cancel")]
+                                              ),
+                                              _vm._v(" "),
+                                              _c(
+                                                "v-btn",
+                                                {
+                                                  attrs: {
+                                                    flat: "",
+                                                    color: "primary"
+                                                  },
+                                                  on: {
+                                                    click: function($event) {
+                                                      return _vm.$refs.menu.save(
+                                                        _vm.ticket.date
+                                                      )
+                                                    }
+                                                  }
+                                                },
+                                                [
+                                                  _vm._v(
+                                                    "OK\n                                            "
+                                                  )
+                                                ]
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
                                     ],
                                     1
                                   ),
@@ -32811,7 +32985,7 @@ var render = function() {
                                     "v-flex",
                                     { attrs: { xs12: "", sm6: "", md6: "" } },
                                     [
-                                      _c("v-text-field", {
+                                      _c("v-combobox", {
                                         directives: [
                                           {
                                             name: "validate",
@@ -32821,11 +32995,15 @@ var render = function() {
                                           }
                                         ],
                                         attrs: {
-                                          "data-vv-name": "employee",
+                                          "item-text": "name",
+                                          "item-value": "id",
+                                          "data-vv-name": "employees",
                                           "error-messages": _vm.errors.collect(
-                                            "employee"
+                                            "employees"
                                           ),
-                                          label: "Employess"
+                                          items: _vm.employees,
+                                          label: "Select Employee(s)...",
+                                          multiple: ""
                                         },
                                         model: {
                                           value: _vm.ticket.employees,
@@ -32838,30 +33016,7 @@ var render = function() {
                                           },
                                           expression: "ticket.employees"
                                         }
-                                      }),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-flex",
-                                        { attrs: { xs12: "" } },
-                                        [
-                                          _c("v-combobox", {
-                                            attrs: {
-                                              items: _vm.items,
-                                              label:
-                                                "Select a favorite activity or create a new one",
-                                              multiple: ""
-                                            },
-                                            model: {
-                                              value: _vm.select,
-                                              callback: function($$v) {
-                                                _vm.select = $$v
-                                              },
-                                              expression: "select"
-                                            }
-                                          })
-                                        ],
-                                        1
-                                      )
+                                      })
                                     ],
                                     1
                                   ),
@@ -32891,15 +33046,15 @@ var render = function() {
                                           label: "Status"
                                         },
                                         model: {
-                                          value: _vm.employee.status,
+                                          value: _vm.ticket.status_id,
                                           callback: function($$v) {
                                             _vm.$set(
-                                              _vm.employee,
-                                              "status",
+                                              _vm.ticket,
+                                              "status_id",
                                               $$v
                                             )
                                           },
-                                          expression: "employee.status"
+                                          expression: "ticket.status_id"
                                         }
                                       })
                                     ],
@@ -32908,9 +33063,9 @@ var render = function() {
                                   _vm._v(" "),
                                   _c(
                                     "v-flex",
-                                    { attrs: { xs12: "", sm6: "", md6: "" } },
+                                    { attrs: { xs12: "", sm12: "", md12: "" } },
                                     [
-                                      _c("v-text-field", {
+                                      _c("v-textarea", {
                                         directives: [
                                           {
                                             name: "validate",
@@ -32919,66 +33074,26 @@ var render = function() {
                                             expression: "'required'"
                                           }
                                         ],
-                                        ref: "password",
                                         attrs: {
-                                          "data-vv-name": "password",
-                                          type: "password",
+                                          "data-vv-name": "description",
                                           "error-messages": _vm.errors.collect(
-                                            "password"
+                                            "description"
                                           ),
-                                          label: "Password"
+                                          solo: "",
+                                          name: "input-7-4",
+                                          label: "Description",
+                                          value: ""
                                         },
                                         model: {
-                                          value: _vm.employee.password,
+                                          value: _vm.ticket.description,
                                           callback: function($$v) {
                                             _vm.$set(
-                                              _vm.employee,
-                                              "password",
+                                              _vm.ticket,
+                                              "description",
                                               $$v
                                             )
                                           },
-                                          expression: "employee.password"
-                                        }
-                                      })
-                                    ],
-                                    1
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-flex",
-                                    { attrs: { xs12: "", sm6: "", md6: "" } },
-                                    [
-                                      _c("v-text-field", {
-                                        directives: [
-                                          {
-                                            name: "validate",
-                                            rawName: "v-validate",
-                                            value:
-                                              "required|confirmed:password",
-                                            expression:
-                                              "'required|confirmed:password'"
-                                          }
-                                        ],
-                                        attrs: {
-                                          type: "password",
-                                          "data-vv-as": "password",
-                                          "error-messages": _vm.errors.collect(
-                                            "confirm_password"
-                                          ),
-                                          "data-vv-name": "confirm_password",
-                                          label: "Confirm Password"
-                                        },
-                                        model: {
-                                          value: _vm.employee.confirm_password,
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.employee,
-                                              "confirm_password",
-                                              $$v
-                                            )
-                                          },
-                                          expression:
-                                            "employee.confirm_password"
+                                          expression: "ticket.description"
                                         }
                                       })
                                     ],
@@ -33066,7 +33181,7 @@ var render = function() {
               staticClass: "elevation-1",
               attrs: {
                 headers: _vm.headers,
-                items: _vm.employees,
+                items: _vm.tickets,
                 search: _vm.search
               },
               scopedSlots: _vm._u([
@@ -33074,21 +33189,27 @@ var render = function() {
                   key: "items",
                   fn: function(props) {
                     return [
-                      _c("td", [_vm._v(_vm._s(props.item.first_name))]),
+                      _c("td", [_vm._v(_vm._s(props.item.id))]),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(props.item.last_name))]),
+                      _c("td", [_vm._v(_vm._s(props.item.description))]),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(props.item.email))]),
+                      _c(
+                        "td",
+                        _vm._l(props.item.assign, function(assign) {
+                          return _c("v-chip", [
+                            _vm._v(
+                              _vm._s(assign.employee.first_name) +
+                                " " +
+                                _vm._s(assign.employee.last_name)
+                            )
+                          ])
+                        }),
+                        1
+                      ),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(props.item.created_at))]),
+                      _c("td", [_vm._v(_vm._s(props.item.date))]),
                       _vm._v(" "),
-                      _c("td", [
-                        _vm._v(
-                          _vm._s(
-                            props.item.status_id === 1 ? "Active" : "Disable"
-                          )
-                        )
-                      ]),
+                      _c("td", [_vm._v(_vm._s(props.item.status.name))]),
                       _vm._v(" "),
                       _c(
                         "td",

@@ -16,6 +16,7 @@ class CreateTicketEmployeesTable extends Migration
         Schema::create('ticket_employees', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('ticket_id');
+            $table->integer('employee_id');
             $table->timestamps();
         });
     }
