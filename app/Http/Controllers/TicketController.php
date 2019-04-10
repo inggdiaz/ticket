@@ -21,6 +21,7 @@ class TicketController extends Controller
             $ticket->assign;
             foreach ($ticket->assign as $index => $employee) {
                 $employee->employee;
+                $employee->employee->name = $employee->employee->first_name . ' ' . $employee->employee->last_name;
             }
             $ticket->status;
         }

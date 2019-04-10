@@ -10,12 +10,14 @@ window.Vue = require('vue');
 import Vuetify from 'vuetify'
 import App from './App.vue'
 import router from './router'
+import DatetimePicker from 'vuetify-datetime-picker'
 // index.js or main.js
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 import VeeValidate from 'vee-validate';
 
-Vue.use(Vuetify)
-Vue.use(VeeValidate)
+Vue.use(Vuetify);
+Vue.use(VeeValidate);
+Vue.use(DatetimePicker);
 
 /**
  * The following block of code may be used to automatically register your

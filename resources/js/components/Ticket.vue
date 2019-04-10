@@ -103,10 +103,6 @@
                                                 value=""
                                         ></v-textarea>
                                     </v-flex>
-
-                                    <v-flex xs12 sm12 md12 v-show="valida">
-                                        <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
-                                    </v-flex>
                                 </v-layout>
                             </v-container>
                         </v-card-text>
@@ -114,6 +110,226 @@
                             <v-spacer></v-spacer>
                             <v-btn color="success" @click.native="save">Save</v-btn>
                             <v-btn color="error" @click.native="close">Cancel</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+
+                <v-dialog v-model="viewDialog" max-width="700px">
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline">Ticket #{{ ticket.id }}</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container grid-list-md>
+                                <v-layout wrap>
+                                    <v-flex xs12 sm12 md12>
+                                        <v-text-field
+                                                disabled
+                                                v-model="ticket.id"
+                                                label="Ticket #"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-text-field
+                                                disabled
+                                                v-model="ticket.subject"
+                                                label="Subject"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-menu
+                                                ref="menu"
+                                                v-model="menu"
+                                                :close-on-content-click="false"
+                                                :nudge-right="40"
+                                                :return-value.sync="ticket.date"
+                                                lazy
+                                                transition="scale-transition"
+                                                offset-y
+                                                full-width
+                                                min-width="290px"
+                                        >
+                                            <template v-slot:activator="{ on }">
+                                                <v-text-field
+                                                        v-model="ticket.date"
+                                                        disabled
+                                                        label="Date"
+                                                        prepend-icon="event"
+                                                        readonly
+                                                        v-on="on"
+                                                ></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="ticket.date" no-title scrollable>
+                                                <v-spacer></v-spacer>
+                                                <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                                                <v-btn flat color="primary" @click="$refs.menu.save(ticket.date)">OK
+                                                </v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
+                                    </v-flex>
+                                    <v-flex xs12 sm12 md12>
+                                        <v-textarea
+                                                disabled
+                                                v-model="ticket.description"
+                                                solo
+                                                name="input-7-4"
+                                                label="Description"
+                                                value=""
+                                        ></v-textarea>
+                                    </v-flex>
+                                    <v-flex xs12 sm12 md12>
+                                        <template>
+                                            <div>
+                                                <v-tabs
+                                                        color="cyan"
+                                                        dark
+                                                        slider-color="yellow">
+                                                    <v-tab :key="1" ripple>
+                                                        Time Entries
+                                                    </v-tab>
+                                                    <v-tab :key="2" ripple>
+                                                        Employees
+                                                    </v-tab>
+                                                    <v-tab-item :key="1">
+                                                        <v-card flat>
+                                                            <v-card-text> Times</v-card-text>
+                                                        </v-card>
+                                                    </v-tab-item>
+                                                    <v-tab-item :key="2">
+                                                        <template>
+                                                            <v-data-table
+                                                                    :headers="headersAssign"
+                                                                    :items="ticket.assign"
+                                                                    class="elevation-1"
+                                                            >
+                                                                <template v-slot:items="props">
+                                                                    <td>{{ props.item.employee.first_name }}</td>
+                                                                    <td>{{ props.item.employee.last_name }}</td>
+                                                                    <td>{{ props.item.employee.email }}</td>
+                                                                    <td>
+                                                                        <v-tooltip bottom>
+                                                                            <template v-slot:activator="{ on }">
+                                                                                <v-icon small class="mr-2" v-on="on" @click="viewItem(props.item)">pageview</v-icon>
+                                                                            </template>
+                                                                            <span>View</span>
+                                                                        </v-tooltip>
+                                                                        <v-tooltip bottom>
+                                                                            <template v-slot:activator="{ on }">
+                                                                                <v-icon small class="mr-2" v-on="on" @click="editItem(props.item)">delete_forever</v-icon>
+                                                                            </template>
+                                                                            <span>Delete</span>
+                                                                        </v-tooltip>
+                                                                    </td>
+                                                                </template>
+                                                            </v-data-table>
+                                                        </template>
+                                                    </v-tab-item>
+                                                </v-tabs>
+                                            </div>
+                                        </template>
+                                    </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="error" @click.native="closeView">Close</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+
+                <v-dialog v-model="timeDialog" max-width="700px">
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline">Time Entry Form</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container grid-list-md>
+                                <v-layout wrap>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-text-field
+                                                disabled
+                                                v-model="ticket.id"
+                                                label="Ticket #"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-menu
+                                                ref="menu"
+                                                v-model="menu"
+                                                :close-on-content-click="false"
+                                                :nudge-right="40"
+                                                :return-value.sync="ticket.date"
+                                                lazy
+                                                transition="scale-transition"
+                                                offset-y
+                                                full-width
+                                                min-width="290px"
+                                        >
+                                            <template v-slot:activator="{ on }">
+                                                <v-text-field
+                                                        v-model="ticket.date"
+                                                        disabled
+                                                        label="Date"
+                                                        prepend-icon="event"
+                                                        readonly
+                                                        v-on="on"
+                                                ></v-text-field>
+                                            </template>
+                                            <v-date-picker v-model="ticket.date" no-title scrollable>
+                                                <v-spacer></v-spacer>
+                                                <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                                                <v-btn flat color="primary" @click="$refs.menu.save(ticket.date)">OK
+                                                </v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
+                                    </v-flex>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-text-field
+                                                disabled
+                                                v-model="ticket.subject"
+                                                label="Subject"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-text-field
+                                                disabled
+                                                v-model="ticket.status"
+                                                label="Status"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-divider></v-divider>
+                                    <h3> Time Entry Information</h3>
+                                    <v-flex xs12 sm12 md12>
+                                        <v-combobox
+                                                item-text="employee.name"
+                                                item-value="employee_id"
+                                                v-model="time.employee_id"
+                                                v-validate="'required'"
+                                                data-vv-name="employees"
+                                                :error-messages="errors.collect('employees')"
+                                                :items="ticket.assign"
+                                                label="Select Employee"
+                                        ></v-combobox>
+                                    </v-flex>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-datetime-picker
+                                                label="Select Datetime from"
+                                                v-model="time.date_from">
+                                        </v-datetime-picker>
+                                    </v-flex>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-datetime-picker
+                                                label="Select Datetime to"
+                                                v-model="time.date_to">
+                                        </v-datetime-picker>
+                                    </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="error" @click.native="closeTime">Close</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -128,7 +344,30 @@
                     <td>{{ props.item.date}}</td>
                     <td>{{ props.item.status.name}}</td>
                     <td class="justify-center layout px-0">
-                        <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-icon small class="mr-2" v-on="on" @click="timeItem(props.item)">note_add</v-icon>
+                            </template>
+                            <span>Add Note</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-icon small class="mr-2" v-on="on" @click="viewItem(props.item)">pageview</v-icon>
+                            </template>
+                            <span>View</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-icon small class="mr-2" v-on="on" @click="editItem(props.item)">edit</v-icon>
+                            </template>
+                            <span>Edit</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-icon small class="mr-2" v-on="on" @click="editItem(props.item)">delete_forever</v-icon>
+                            </template>
+                            <span>Delete</span>
+                        </v-tooltip>
                     </td>
                 </template>
                 <template slot="no-data">
@@ -150,6 +389,8 @@
                 employees: [],
                 tickets: [],
                 dialog: false,
+                viewDialog: false,
+                timeDialog: false,
                 headers: [
                     {text: "#", value: "#"},
                     {text: "Description", value: "description"},
@@ -157,9 +398,15 @@
                     {text: "Date", value: "date", sortable: false},
                     {text: "Status", value: "status_id", sortable: false},
                     {text: "Actions", value: "actions", sortable: false},
+                ], headersAssign: [
+                    {text: "First Name", value: "first_name"},
+                    {text: "Last Name", value: "last_name"},
+                    {text: "Email", value: "email"},
+                    {text: "Actions", value: "actions", sortable: false},
                 ],
                 search: "",
                 editedIndex: -1,
+                datetime: new Date(),
                 ticket: {
                     id: 0,
                     subject: '',
@@ -167,6 +414,12 @@
                     date: '',
                     status_id: null,
                     description: '',
+                },
+                time: {
+                    id: 0,
+                    employee_id: null,
+                    date_from: new Date(),
+                    date_to: new Date(),
                 },
                 menu: false,
                 date: new Date().toISOString().substr(0, 10),
@@ -206,7 +459,7 @@
         },
         computed: {
             formTitle() {
-                return this.editedIndex === -1 ? "New Employee" : "Update Employee";
+                return this.editedIndex === -1 ? "New Ticket" : "Update Ticket";
             }
         },
         watch: {
@@ -241,20 +494,42 @@
                     this.status = response.data;
                 });
             },
+            viewItem(item) {
+                this.ticket.id = item.id;
+                this.ticket.subject = item.subject;
+                this.ticket.description = item.description;
+                this.ticket.date = item.date;
+                this.ticket.assign = item.assign;
+                this.viewDialog = true;
+            },
+            timeItem(item) {
+                this.ticket.id = item.id;
+                this.ticket.subject = item.subject;
+                this.ticket.description = item.description;
+                this.ticket.date = item.date;
+                this.ticket.assign = item.assign;
+                this.ticket.status = item.status.name;
+                this.timeDialog = true;
+            },
             editItem(item) {
-                this.employee.id = item.id;
-                this.employee.first_name = item.first_name;
-                this.employee.last_name = item.last_name;
-                this.employee.email = item.email;
-                this.employee.password = item.password;
-                this.employee.confirm_password = item.password;
-                this.employee.old_password = item.password;
-                this.employee.status = item.status_id;
+                this.ticket.id = item.id;
+                this.ticket.subject = item.subject;
+                this.ticket.description = item.description;
+                this.ticket.date = item.date;
+                this.ticket.status_id = item.status_id;
                 this.editedIndex = 1;
                 this.dialog = true;
             },
             close() {
                 this.dialog = false;
+                this.cleanForm();
+            },
+            closeView() {
+                this.viewDialog = false;
+                this.cleanForm();
+            },
+            closeTime() {
+                this.timeDialog = false;
                 this.cleanForm();
             },
             cleanForm() {

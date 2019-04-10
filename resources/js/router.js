@@ -13,8 +13,8 @@ var router = new Router({
     routes: [
         {
             path: '/',
-            name: 'employee',
-            component: Employee,
+            name: 'ticket',
+            component: Ticket,
         },{
             path: '/employee',
             name: 'employee',
