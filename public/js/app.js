@@ -2740,6 +2740,20 @@ __webpack_require__.r(__webpack_exports__);
         value: "actions",
         sortable: false
       }],
+      headersTime: [{
+        text: "Employee",
+        value: "employee"
+      }, {
+        text: "Date",
+        value: "date"
+      }, {
+        text: "Note",
+        value: "note"
+      }, {
+        text: "Actions",
+        value: "actions",
+        sortable: false
+      }],
       search: "",
       editedIndex: -1,
       datetime: new Date(),
@@ -2772,31 +2786,6 @@ __webpack_require__.r(__webpack_exports__);
         id: 3,
         name: 'Ana Diaz'
       }],
-      employee: {
-        id: 0,
-        first_name: "",
-        last_name: "",
-        email: "",
-        status: null,
-        password: "",
-        confirm_password: "",
-        change_password: 1,
-        old_password: ""
-      },
-      id: "",
-      nombre: "",
-      tipo_documento: "",
-      status: [],
-      documentos: ["DNI", "RUC", "PASAPORTE", "CEDULA"],
-      num_documento: "",
-      direccion: "",
-      telefono: "",
-      email: "",
-      valida: 0,
-      validaMensaje: [],
-      adModal: 0,
-      adAccion: 0,
-      adNombre: "",
       adId: ""
     };
   },
@@ -2866,6 +2855,16 @@ __webpack_require__.r(__webpack_exports__);
       this.editedIndex = 1;
       this.dialog = true;
     },
+    editTime: function editTime(item) {
+      this.time.id = item.id;
+      this.time.ticket_id = item.ticket_id;
+      this.time.employee_id = item.employee_id;
+      this.time.date_from = item.from;
+      this.time.date_to = item.to;
+      this.time.note = item.note; // this.editedIndex = 1;
+
+      this.timeDialog = true;
+    },
     close: function close() {
       this.dialog = false;
       this.cleanForm();
@@ -2923,15 +2922,36 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$validator.validateAll().then(function (result) {
         if (result) {
-          axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/ticket/time', self.time).then(function (response) {
-            self.closeTime();
-            self.list();
-            self.cleanForm();
-          })["catch"](function (response) {
-            console.log('Error');
-            console.log(response);
-          });
+          if (self.time.id > 0) {
+            axios__WEBPACK_IMPORTED_MODULE_0___default.a.put('api/ticket/time', self.time).then(function (response) {
+              self.closeTime();
+              self.list();
+              self.cleanForm();
+              self.closeView(); // self.viewDialog()
+            })["catch"](function (response) {
+              console.log('Error');
+              console.log(response);
+            });
+          } else {
+            axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/ticket/time', self.time).then(function (response) {
+              self.closeTime();
+              self.list();
+              self.cleanForm();
+            })["catch"](function (response) {
+              console.log('Error');
+              console.log(response);
+            });
+          }
         }
+      });
+    },
+    deleteTime: function deleteTime(id) {
+      var self = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("api/ticket/time/".concat(id)).then(function (response) {
+        self.closeTime();
+        self.list();
+        self.cleanForm();
+        self.closeView();
       });
     }
   }
@@ -51239,7 +51259,7 @@ var render = function() {
                                                           "elevation-1",
                                                         attrs: {
                                                           headers:
-                                                            _vm.headersAssign,
+                                                            _vm.headersTime,
                                                           items:
                                                             _vm.ticket.times
                                                         },
@@ -51255,7 +51275,7 @@ var render = function() {
                                                                     _vm._s(
                                                                       props.item
                                                                         .employee
-                                                                        .first_name
+                                                                        .name
                                                                     )
                                                                   )
                                                                 ]),
@@ -51264,8 +51284,7 @@ var render = function() {
                                                                   _vm._v(
                                                                     _vm._s(
                                                                       props.item
-                                                                        .employee
-                                                                        .last_name
+                                                                        .created_at
                                                                     )
                                                                   )
                                                                 ]),
@@ -51274,8 +51293,7 @@ var render = function() {
                                                                   _vm._v(
                                                                     _vm._s(
                                                                       props.item
-                                                                        .employee
-                                                                        .email
+                                                                        .note
                                                                     )
                                                                   )
                                                                 ]),
@@ -51315,7 +51333,7 @@ var render = function() {
                                                                                           click: function(
                                                                                             $event
                                                                                           ) {
-                                                                                            return _vm.viewItem(
+                                                                                            return _vm.editTime(
                                                                                               props.item
                                                                                             )
                                                                                           }
@@ -51325,7 +51343,7 @@ var render = function() {
                                                                                     ),
                                                                                     [
                                                                                       _vm._v(
-                                                                                        "\n                                                                                pageview\n                                                                            "
+                                                                                        "\n                                                                                edit\n                                                                            "
                                                                                       )
                                                                                     ]
                                                                                   )
@@ -51345,7 +51363,7 @@ var render = function() {
                                                                           "span",
                                                                           [
                                                                             _vm._v(
-                                                                              "View"
+                                                                              "Edit"
                                                                             )
                                                                           ]
                                                                         )
@@ -51384,8 +51402,10 @@ var render = function() {
                                                                                           click: function(
                                                                                             $event
                                                                                           ) {
-                                                                                            return _vm.editItem(
-                                                                                              props.item
+                                                                                            return _vm.deleteTime(
+                                                                                              props
+                                                                                                .item
+                                                                                                .id
                                                                                             )
                                                                                           }
                                                                                         }

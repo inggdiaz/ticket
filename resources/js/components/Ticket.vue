@@ -175,28 +175,28 @@
                                                     <v-tab-item :key="1">
                                                         <template>
                                                             <v-data-table
-                                                                    :headers="headersAssign"
+                                                                    :headers="headersTime"
                                                                     :items="ticket.times"
                                                                     class="elevation-1"
                                                             >
                                                                 <template v-slot:items="props">
-                                                                    <td>{{ props.item.employee.first_name }}</td>
-                                                                    <td>{{ props.item.employee.last_name }}</td>
-                                                                    <td>{{ props.item.employee.email }}</td>
+                                                                    <td>{{ props.item.employee.name }}</td>
+                                                                    <td>{{ props.item.created_at }}</td>
+                                                                    <td>{{ props.item.note }}</td>
                                                                     <td>
                                                                         <v-tooltip bottom>
                                                                             <template v-slot:activator="{ on }">
                                                                                 <v-icon small class="mr-2" v-on="on"
-                                                                                        @click="viewItem(props.item)">
-                                                                                    pageview
+                                                                                        @click="editTime(props.item)">
+                                                                                    edit
                                                                                 </v-icon>
                                                                             </template>
-                                                                            <span>View</span>
+                                                                            <span>Edit</span>
                                                                         </v-tooltip>
                                                                         <v-tooltip bottom>
                                                                             <template v-slot:activator="{ on }">
                                                                                 <v-icon small class="mr-2" v-on="on"
-                                                                                        @click="editItem(props.item)">
+                                                                                        @click="deleteTime(props.item.id)">
                                                                                     delete_forever
                                                                                 </v-icon>
                                                                             </template>
@@ -409,10 +409,17 @@
                     {text: "Date", value: "date", sortable: false},
                     {text: "Status", value: "status_id", sortable: false},
                     {text: "Actions", value: "actions", sortable: false},
-                ], headersAssign: [
+                ],
+                headersAssign: [
                     {text: "First Name", value: "first_name"},
                     {text: "Last Name", value: "last_name"},
                     {text: "Email", value: "email"},
+                    {text: "Actions", value: "actions", sortable: false},
+                ],
+                headersTime: [
+                    {text: "Employee", value: "employee"},
+                    {text: "Date", value: "date"},
+                    {text: "Note", value: "note"},
                     {text: "Actions", value: "actions", sortable: false},
                 ],
                 search: "",
@@ -442,32 +449,7 @@
                     {id: 2, name: 'Daniel Diaz'},
                     {id: 3, name: 'Ana Diaz'},
                 ],
-                employee: {
-                    id: 0,
-                    first_name: "",
-                    last_name: "",
-                    email: "",
-                    status: null,
-                    password: "",
-                    confirm_password: "",
-                    change_password: 1,
-                    old_password: "",
-                },
-                id: "",
-                nombre: "",
-                tipo_documento: "",
-                status: [],
-                documentos: ["DNI", "RUC", "PASAPORTE", "CEDULA"],
-                num_documento: "",
-                direccion: "",
-                telefono: "",
-                email: "",
-                valida: 0,
-                validaMensaje: [],
-                adModal: 0,
-                adAccion: 0,
-                adNombre: "",
-                adId: ""
+                adId: "",
             };
         },
         computed: {
@@ -535,6 +517,16 @@
                 this.editedIndex = 1;
                 this.dialog = true;
             },
+            editTime(item) {
+                this.time.id = item.id;
+                this.time.ticket_id = item.ticket_id;
+                this.time.employee_id = item.employee_id;
+                this.time.date_from = item.from;
+                this.time.date_to = item.to;
+                this.time.note = item.note;
+                // this.editedIndex = 1;
+                this.timeDialog = true;
+            },
             close() {
                 this.dialog = false;
                 this.cleanForm();
@@ -592,15 +584,37 @@
                 // return;
                 this.$validator.validateAll().then(result => {
                     if (result) {
-                        axios.post('api/ticket/time', self.time).then(response => {
-                            self.closeTime();
-                            self.list();
-                            self.cleanForm();
-                        }).catch(response => {
-                            console.log('Error');
-                            console.log(response);
-                        });
+                        if (self.time.id > 0) {
+                            axios.put('api/ticket/time', self.time).then(response => {
+                                self.closeTime();
+                                self.list();
+                                self.cleanForm();
+                                self.closeView();
+                                // self.viewDialog()
+                            }).catch(response => {
+                                console.log('Error');
+                                console.log(response);
+                            });
+                        } else {
+                            axios.post('api/ticket/time', self.time).then(response => {
+                                self.closeTime();
+                                self.list();
+                                self.cleanForm();
+                            }).catch(response => {
+                                console.log('Error');
+                                console.log(response);
+                            });
+                        }
                     }
+                });
+            },
+            deleteTime(id) {
+                let self = this;
+                axios.delete(`api/ticket/time/${id}`).then(response => {
+                    self.closeTime();
+                    self.list();
+                    self.cleanForm();
+                    self.closeView();
                 });
             },
 

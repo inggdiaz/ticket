@@ -43,16 +43,6 @@ class TicketController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
@@ -85,11 +75,36 @@ class TicketController extends Controller
     {
         $time = new TicketTime();
         $time->ticket_id = $request->input('ticket_id');
-        $time->employee_id = ((object) $request->input('employee_id'))->id;
+        $time->employee_id = ((object)$request->input('employee_id'))->id;
         $time->from = date("Y-m-d H:i:s", strtotime($request->input('date_from')));
         $time->to = date("Y-m-d H:i:s", strtotime($request->input('date_to')));
         $time->note = $request->input('note');
         $time->save();
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function deletedTime($id)
+    {
+        \App\TicketTime::destroy($id);
+    }
+
+
+    /**
+     * @param Request $request
+     * @return
+     */
+    public function updateTimes(Request $request)
+    {
+        $time = TicketTime::find($request->input('id'));
+        $time->ticket_id = $request->input('ticket_id');
+        $time->employee_id = $request->input('employee_id');
+        $time->from = date("Y-m-d H:i:s", strtotime($request->input('date_from')));
+        $time->to = date("Y-m-d H:i:s", strtotime($request->input('date_to')));
+        $time->note = $request->input('note');
+        $time->save();
+        return $time;
     }
 
     /**
