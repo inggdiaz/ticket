@@ -2008,9 +2008,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   $_veeValidate: {
@@ -2057,8 +2054,6 @@ __webpack_require__.r(__webpack_exports__);
         old_password: ""
       },
       id: "",
-      nombre: "",
-      tipo_documento: "",
       status: [{
         id: 1,
         name: "Active"
@@ -2066,17 +2061,7 @@ __webpack_require__.r(__webpack_exports__);
         id: 2,
         name: "Disable"
       }],
-      documentos: ["DNI", "RUC", "PASAPORTE", "CEDULA"],
-      num_documento: "",
-      direccion: "",
-      telefono: "",
-      email: "",
-      valida: 0,
-      validaMensaje: [],
-      adModal: 0,
-      adAccion: 0,
-      adNombre: "",
-      adId: ""
+      email: ""
     };
   },
   computed: {
@@ -2142,7 +2127,6 @@ __webpack_require__.r(__webpack_exports__);
             });
           } else {
             axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/employee/add', self.employee).then(function (response) {
-              console.log(response);
               self.close();
               self.list();
               self.cleanForm();
@@ -2153,24 +2137,6 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       });
-    },
-    validar: function validar() {
-      this.valida = 0;
-      this.validaMensaje = [];
-
-      if (this.nombre.length < 3 || this.nombre.length > 100) {
-        this.validaMensaje.push("El nombre debe tener más de 3 caracteres y menos de 100 caracteres.");
-      }
-
-      if (!this.tipo_documento) {
-        this.validaMensaje.push("Seleccione un tipo documento.");
-      }
-
-      if (this.validaMensaje.length) {
-        this.valida = 1;
-      }
-
-      return this.valida;
     }
   }
 });
@@ -2219,7 +2185,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    ingresar: function ingresar() {
+    login: function login() {
       var _this = this;
 
       this.error = null;
@@ -3045,11 +3011,10 @@ __webpack_require__.r(__webpack_exports__);
     editTime: function editTime(item) {
       this.time.id = item.id;
       this.time.ticket_id = item.ticket_id;
-      this.time.employee_id = item.employee_id;
+      this.time.employee_id = item.employee.name;
       this.time.date_from = item.from;
       this.time.date_to = item.to;
-      this.time.note = item.note; // this.editedIndex = 1;
-
+      this.time.note = item.note;
       this.timeDialog = true;
     },
     close: function close() {
@@ -50478,29 +50443,6 @@ var render = function() {
                                       })
                                     ],
                                     1
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-flex",
-                                    {
-                                      directives: [
-                                        {
-                                          name: "show",
-                                          rawName: "v-show",
-                                          value: _vm.valida,
-                                          expression: "valida"
-                                        }
-                                      ],
-                                      attrs: { xs12: "", sm12: "", md12: "" }
-                                    },
-                                    _vm._l(_vm.validaMensaje, function(v) {
-                                      return _c("div", {
-                                        key: v,
-                                        staticClass: "red--text",
-                                        domProps: { textContent: _vm._s(v) }
-                                      })
-                                    }),
-                                    0
                                   )
                                 ],
                                 1
@@ -50730,9 +50672,9 @@ var render = function() {
                         "v-btn",
                         {
                           attrs: { color: "primary" },
-                          on: { click: _vm.ingresar }
+                          on: { click: _vm.login }
                         },
-                        [_vm._v("Ingresar")]
+                        [_vm._v("Login")]
                       )
                     ],
                     1

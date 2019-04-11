@@ -580,11 +580,10 @@
             editTime(item) {
                 this.time.id = item.id;
                 this.time.ticket_id = item.ticket_id;
-                this.time.employee_id = item.employee_id;
+                this.time.employee_id = item.employee.name;
                 this.time.date_from = item.from;
                 this.time.date_to = item.to;
                 this.time.note = item.note;
-                // this.editedIndex = 1;
                 this.timeDialog = true;
             },
             close() {

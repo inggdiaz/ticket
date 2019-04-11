@@ -69,3 +69,22 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+##About Project
+This project has been made using the technology  VueJS, Vuex, Mysql version 5.7.
+
+The script of database in ./ name is ticket.sql 
+
+##For run project: 
+1-) git clone 
+2-) create database in Mysql using the script as name ticket.sql, other option execute this php artisan migrate --seed in the console   
+
+##Users logins:
+email: ing.geronimodiaz@gmail.com
+password: 123456 
+
+email: ana@gmail.com
+password: 123456
+
+email: efrain@gmail.com
+password: 123456

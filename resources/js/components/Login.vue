@@ -12,7 +12,7 @@
         </v-card-text>
         <v-card-actions class="px-3 pb-3">
           <v-flex text-xs-right>
-            <v-btn @click="ingresar" color="primary">Ingresar</v-btn>
+            <v-btn @click="login" color="primary">Login</v-btn>
           </v-flex>
         </v-card-actions>
       </v-card>
@@ -30,7 +30,7 @@ export default {
     };
   },
   methods: {
-    ingresar() {
+    login() {
       this.error = null;
       let self = this;
       axios

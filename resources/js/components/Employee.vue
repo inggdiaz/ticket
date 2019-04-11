@@ -86,9 +86,6 @@
                                                 label="Confirm Password"
                                         ></v-text-field>
                                     </v-flex>
-                                    <v-flex xs12 sm12 md12 v-show="valida">
-                                        <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
-                                    </v-flex>
                                 </v-layout>
                             </v-container>
                         </v-card-text>
@@ -152,20 +149,8 @@
                     old_password: "",
                 },
                 id: "",
-                nombre: "",
-                tipo_documento: "",
                 status: [{id: 1, name: "Active"}, {id: 2, name: "Disable"}],
-                documentos: ["DNI", "RUC", "PASAPORTE", "CEDULA"],
-                num_documento: "",
-                direccion: "",
-                telefono: "",
                 email: "",
-                valida: 0,
-                validaMensaje: [],
-                adModal: 0,
-                adAccion: 0,
-                adNombre: "",
-                adId: ""
             };
         },
         computed: {
@@ -234,7 +219,6 @@
                             });
                         } else {
                             axios.post('api/employee/add', self.employee).then(response => {
-                                console.log(response);
                                 self.close();
                                 self.list();
                                 self.cleanForm();
@@ -246,23 +230,6 @@
                     }
                 });
             },
-            validar() {
-                this.valida = 0;
-                this.validaMensaje = [];
-
-                if (this.nombre.length < 3 || this.nombre.length > 100) {
-                    this.validaMensaje.push(
-                        "El nombre debe tener más de 3 caracteres y menos de 100 caracteres."
-                    );
-                }
-                if (!this.tipo_documento) {
-                    this.validaMensaje.push("Seleccione un tipo documento.");
-                }
-                if (this.validaMensaje.length) {
-                    this.valida = 1;
-                }
-                return this.valida;
-            }
         }
     };
 </script>
