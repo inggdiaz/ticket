@@ -90,6 +90,14 @@ class TicketController extends Controller
         \App\TicketTime::destroy($id);
     }
 
+    /**
+     * @param Request $request
+     */
+    public function deletedAssign($id)
+    {
+        \App\TicketEmployee::destroy($id);
+    }
+
 
     /**
      * @param Request $request

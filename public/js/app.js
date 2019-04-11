@@ -2692,6 +2692,52 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   $_veeValidate: {
@@ -2704,6 +2750,7 @@ __webpack_require__.r(__webpack_exports__);
       dialog: false,
       viewDialog: false,
       timeDialog: false,
+      employeeDialog: false,
       headers: [{
         text: "#",
         value: "#"
@@ -2776,16 +2823,13 @@ __webpack_require__.r(__webpack_exports__);
       menu: false,
       date: new Date().toISOString().substr(0, 10),
       select: [],
-      items: [{
-        id: 1,
-        name: 'Geronimo Diaz'
-      }, {
-        id: 2,
-        name: 'Daniel Diaz'
-      }, {
-        id: 3,
-        name: 'Ana Diaz'
-      }],
+      status: null,
+      employee: {
+        first_name: "",
+        last_name: "",
+        email: "",
+        status: ""
+      },
       adId: ""
     };
   },
@@ -2836,6 +2880,12 @@ __webpack_require__.r(__webpack_exports__);
       this.ticket.times = item.times;
       this.viewDialog = true;
     },
+    viewEmployee: function viewEmployee(employee) {
+      console.log(employee);
+      this.employee = employee;
+      this.employee.status = employee.status_id === 1 ? 'Active' : 'Disable';
+      this.employeeDialog = true;
+    },
     timeItem: function timeItem(item) {
       this.ticket.id = item.id;
       this.time.ticket_id = item.id;
@@ -2852,6 +2902,12 @@ __webpack_require__.r(__webpack_exports__);
       this.ticket.description = item.description;
       this.ticket.date = item.date;
       this.ticket.status_id = item.status_id;
+      var emp = [];
+      item.assign.map(function (data) {
+        emp.push(data.employee);
+      }); // console.log(emp);
+
+      this.ticket.employees = emp;
       this.editedIndex = 1;
       this.dialog = true;
     },
@@ -2948,6 +3004,15 @@ __webpack_require__.r(__webpack_exports__);
     deleteTime: function deleteTime(id) {
       var self = this;
       axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("api/ticket/time/".concat(id)).then(function (response) {
+        self.closeTime();
+        self.list();
+        self.cleanForm();
+        self.closeView();
+      });
+    },
+    deleteAssign: function deleteAssign(id) {
+      var self = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("api/ticket/assign/".concat(id)).then(function (response) {
         self.closeTime();
         self.list();
         self.cleanForm();
@@ -50665,6 +50730,178 @@ var render = function() {
                 {
                   attrs: { "max-width": "500px" },
                   model: {
+                    value: _vm.employeeDialog,
+                    callback: function($$v) {
+                      _vm.employeeDialog = $$v
+                    },
+                    expression: "employeeDialog"
+                  }
+                },
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "mb-2",
+                      attrs: { slot: "activator", color: "primary", dark: "" },
+                      slot: "activator"
+                    },
+                    [_vm._v("New")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card",
+                    [
+                      _c("v-card-title", [
+                        _c("span", { staticClass: "headline" }, [
+                          _vm._v("Employee")
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "v-card-text",
+                        [
+                          _c(
+                            "v-container",
+                            { attrs: { "grid-list-md": "" } },
+                            [
+                              _c(
+                                "v-layout",
+                                { attrs: { wrap: "" } },
+                                [
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { xs12: "", sm6: "", md6: "" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          disabled: "",
+                                          label: "First Name"
+                                        },
+                                        model: {
+                                          value: _vm.employee.first_name,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.employee,
+                                              "first_name",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "employee.first_name"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { xs12: "", sm6: "", md6: "" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          disabled: "",
+                                          label: "Last Name"
+                                        },
+                                        model: {
+                                          value: _vm.employee.last_name,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.employee,
+                                              "last_name",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "employee.last_name"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { xs12: "", sm6: "", md6: "" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: { disabled: "", label: "Email" },
+                                        model: {
+                                          value: _vm.employee.email,
+                                          callback: function($$v) {
+                                            _vm.$set(_vm.employee, "email", $$v)
+                                          },
+                                          expression: "employee.email"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { xs12: "", sm6: "", md6: "" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          disabled: "",
+                                          label: "Status"
+                                        },
+                                        model: {
+                                          value: _vm.employee.status,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.employee,
+                                              "status",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "employee.status"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-card-actions",
+                        [
+                          _c("v-spacer"),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "error" },
+                              nativeOn: {
+                                click: function($event) {
+                                  _vm.employeeDialog = false
+                                }
+                              }
+                            },
+                            [_vm._v("Cancel")]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-dialog",
+                {
+                  attrs: { "max-width": "500px" },
+                  model: {
                     value: _vm.dialog,
                     callback: function($$v) {
                       _vm.dialog = $$v
@@ -51539,8 +51776,10 @@ var render = function() {
                                                                                           click: function(
                                                                                             $event
                                                                                           ) {
-                                                                                            return _vm.viewItem(
-                                                                                              props.item
+                                                                                            return _vm.viewEmployee(
+                                                                                              props
+                                                                                                .item
+                                                                                                .employee
                                                                                             )
                                                                                           }
                                                                                         }
@@ -51608,8 +51847,10 @@ var render = function() {
                                                                                           click: function(
                                                                                             $event
                                                                                           ) {
-                                                                                            return _vm.editItem(
-                                                                                              props.item
+                                                                                            return _vm.deleteAssign(
+                                                                                              props
+                                                                                                .item
+                                                                                                .id
                                                                                             )
                                                                                           }
                                                                                         }
@@ -93081,8 +93322,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuetify__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./App.vue */ "./resources/js/App.vue");
 /* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./router */ "./resources/js/router.js");
-/* harmony import */ var vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify-datetime-picker */ "./node_modules/vuetify-datetime-picker/dist/index.js");
-/* harmony import */ var vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuetify-datetime-picker */ "./node_modules/vuetify-datetime-picker/dist/index.js");
+/* harmony import */ var vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/dist/vuetify.min.css */ "./node_modules/vuetify/dist/vuetify.min.css");
 /* harmony import */ var vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vee_validate__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vee-validate */ "./node_modules/vee-validate/dist/vee-validate.esm.js");
@@ -93104,7 +93345,7 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 Vue.use(vuetify__WEBPACK_IMPORTED_MODULE_0___default.a);
 Vue.use(vee_validate__WEBPACK_IMPORTED_MODULE_5__["default"]);
-Vue.use(vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_6___default.a);
+Vue.use(vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_3___default.a);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

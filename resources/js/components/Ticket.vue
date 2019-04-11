@@ -14,6 +14,52 @@
                         hide-details
                 ></v-text-field>
                 <v-spacer></v-spacer>
+                <v-dialog v-model="employeeDialog" max-width="500px">
+                    <v-btn slot="activator" color="primary" dark class="mb-2">New</v-btn>
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline">Employee</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container grid-list-md>
+                                <v-layout wrap>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-text-field
+                                                disabled
+                                                v-model="employee.first_name"
+                                                label="First Name"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-text-field
+                                                disabled
+                                                v-model="employee.last_name"
+                                                label="Last Name">
+                                        </v-text-field>
+                                    </v-flex>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-text-field
+                                                disabled
+                                                v-model="employee.email"
+                                                label="Email"
+                                        ></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs12 sm6 md6>
+                                        <v-text-field
+                                                disabled
+                                                v-model="employee.status"
+                                                label="Status"
+                                        ></v-text-field>
+                                    </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="error" @click.native="employeeDialog = false">Cancel</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
                 <v-dialog v-model="dialog" max-width="500px">
                     <v-btn slot="activator" color="primary" dark class="mb-2">Create Ticket</v-btn>
                     <v-card>
@@ -222,7 +268,7 @@
                                                                         <v-tooltip bottom>
                                                                             <template v-slot:activator="{ on }">
                                                                                 <v-icon small class="mr-2" v-on="on"
-                                                                                        @click="viewItem(props.item)">
+                                                                                        @click="viewEmployee(props.item.employee)">
                                                                                     pageview
                                                                                 </v-icon>
                                                                             </template>
@@ -231,7 +277,7 @@
                                                                         <v-tooltip bottom>
                                                                             <template v-slot:activator="{ on }">
                                                                                 <v-icon small class="mr-2" v-on="on"
-                                                                                        @click="editItem(props.item)">
+                                                                                        @click="deleteAssign(props.item.id)">
                                                                                     delete_forever
                                                                                 </v-icon>
                                                                             </template>
@@ -402,6 +448,7 @@
                 dialog: false,
                 viewDialog: false,
                 timeDialog: false,
+                employeeDialog: false,
                 headers: [
                     {text: "#", value: "#"},
                     {text: "Description", value: "description"},
@@ -444,11 +491,13 @@
                 menu: false,
                 date: new Date().toISOString().substr(0, 10),
                 select: [],
-                items: [
-                    {id: 1, name: 'Geronimo Diaz'},
-                    {id: 2, name: 'Daniel Diaz'},
-                    {id: 3, name: 'Ana Diaz'},
-                ],
+                status: null,
+                employee: {
+                    first_name: "",
+                    last_name: "",
+                    email: "",
+                    status: "",
+                },
                 adId: "",
             };
         },
@@ -498,6 +547,12 @@
                 this.ticket.times = item.times;
                 this.viewDialog = true;
             },
+            viewEmployee(employee) {
+                console.log(employee);
+                this.employee = employee;
+                this.employee.status = (employee.status_id === 1) ? 'Active' : 'Disable';
+                this.employeeDialog = true;
+            },
             timeItem(item) {
                 this.ticket.id = item.id;
                 this.time.ticket_id = item.id;
@@ -514,6 +569,12 @@
                 this.ticket.description = item.description;
                 this.ticket.date = item.date;
                 this.ticket.status_id = item.status_id;
+                let emp = [];
+                item.assign.map(data => {
+                   emp.push(data.employee);
+                });
+                // console.log(emp);
+                this.ticket.employees = emp;
                 this.editedIndex = 1;
                 this.dialog = true;
             },
@@ -611,6 +672,15 @@
             deleteTime(id) {
                 let self = this;
                 axios.delete(`api/ticket/time/${id}`).then(response => {
+                    self.closeTime();
+                    self.list();
+                    self.cleanForm();
+                    self.closeView();
+                });
+            },
+            deleteAssign(id) {
+                let self = this;
+                axios.delete(`api/ticket/assign/${id}`).then(response => {
                     self.closeTime();
                     self.list();
                     self.cleanForm();
