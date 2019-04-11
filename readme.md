@@ -79,7 +79,7 @@ The script of database in ./ name is ticket.sql
 1-) git clone 
 2-) create database in Mysql using the script as name ticket.sql, other option execute this php artisan migrate --seed in the console   
 
-##Users logins:
+## Users logins:
 email: ing.geronimodiaz@gmail.com
 password: 123456 
 
