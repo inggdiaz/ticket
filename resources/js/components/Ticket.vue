@@ -419,7 +419,7 @@
                         </v-tooltip>
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on }">
-                                <v-icon small class="mr-2" v-on="on" @click="editItem(props.item)">delete_forever
+                                <v-icon small class="mr-2" v-on="on" @click="deleteTicket(props.item.id)">delete_forever
                                 </v-icon>
                             </template>
                             <span>Delete</span>
@@ -570,7 +570,7 @@
                 this.ticket.status_id = item.status_id;
                 let emp = [];
                 item.assign.map(data => {
-                   emp.push(data.employee);
+                    emp.push(data.employee);
                 });
                 // console.log(emp);
                 this.ticket.employees = emp;
@@ -675,6 +675,12 @@
                     self.list();
                     self.cleanForm();
                     self.closeView();
+                });
+            },
+            deleteTicket(id) {
+                let self = this;
+                axios.delete(`api/ticket/${id}`).then(response => {
+                    self.list();
                 });
             },
             deleteAssign(id) {

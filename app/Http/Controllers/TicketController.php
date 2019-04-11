@@ -58,6 +58,7 @@ class TicketController extends Controller
         $ticket->status_id = $request->input('status_id');
         $ticket->description = $request->input('description');
         $ticket->save();
+        \App\TicketEmployee::where('ticket_id',$ticket->id)->delete();
         foreach ($employees as $employee) {
             $employee = (object)$employee;
             //todo Condition save/remove
@@ -75,7 +76,7 @@ class TicketController extends Controller
     {
         $time = new TicketTime();
         $time->ticket_id = $request->input('ticket_id');
-        $time->employee_id = ((object)$request->input('employee_id'))->id;
+        $time->employee_id = ((object)$request->input('employee_id'))->employee_id;
         $time->from = date("Y-m-d H:i:s", strtotime($request->input('date_from')));
         $time->to = date("Y-m-d H:i:s", strtotime($request->input('date_to')));
         $time->note = $request->input('note');
@@ -96,6 +97,15 @@ class TicketController extends Controller
     public function deletedAssign($id)
     {
         \App\TicketEmployee::destroy($id);
+    }
+    /**
+     * @param int $id
+     */
+    public function deletedTicket($id)
+    {
+        \App\Ticket::destroy($id);
+        \App\TicketTime::where('ticket_id',$id)->delete();
+        \App\TicketEmployee::where('ticket_id',$id)->delete();
     }
 
 

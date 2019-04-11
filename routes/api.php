@@ -32,6 +32,7 @@ Route::group([
     Route::put('add', 'TicketController@store');
     Route::post('time', 'TicketController@saveTimes');
     Route::put('time', 'TicketController@updateTimes');
+    Route::delete('{id}', 'TicketController@deletedTicket');
     Route::delete('time/{id}', 'TicketController@deletedTime');
     Route::delete('assign/{id}', 'TicketController@deletedAssign');
     Route::get('report/{from}/{to}', 'TicketController@times');

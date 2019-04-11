@@ -3141,6 +3141,12 @@ __webpack_require__.r(__webpack_exports__);
         self.closeView();
       });
     },
+    deleteTicket: function deleteTicket(id) {
+      var self = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("api/ticket/".concat(id)).then(function (response) {
+        self.list();
+      });
+    },
     deleteAssign: function deleteAssign(id) {
       var self = this;
       axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("api/ticket/assign/".concat(id)).then(function (response) {
@@ -52835,8 +52841,8 @@ var render = function() {
                                               attrs: { small: "" },
                                               on: {
                                                 click: function($event) {
-                                                  return _vm.editItem(
-                                                    props.item
+                                                  return _vm.deleteTicket(
+                                                    props.item.id
                                                   )
                                                 }
                                               }
