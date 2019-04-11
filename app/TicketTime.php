@@ -17,4 +17,9 @@ class TicketTime extends Model
     {
         return $this->belongsTo(Employee::class);
     }
+
+    public function ticket()
+    {
+        return $this->belongsTo(Ticket::class);
+    }
 }

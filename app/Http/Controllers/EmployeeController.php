@@ -22,14 +22,20 @@ class EmployeeController extends Controller
         return $employees;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    // public function login($email, $password){
+    //     echo "Aqui";
+    //     // return Employee::where('email',$email)
+    //     // ->where('password', md5($password))
+    //     // ->count();
+    // }
+
+    
+
+    public function login(Request $request){
+        // echo "Aqui";
+        return Employee::where('email',$request->input('email'))
+        ->where('password', md5($request->input('password')))
+        ->count();
     }
 
     /**

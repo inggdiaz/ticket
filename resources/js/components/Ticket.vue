@@ -15,7 +15,6 @@
                 ></v-text-field>
                 <v-spacer></v-spacer>
                 <v-dialog v-model="employeeDialog" max-width="500px">
-                    <v-btn slot="activator" color="primary" dark class="mb-2">New</v-btn>
                     <v-card>
                         <v-card-title>
                             <span class="headline">Employee</span>

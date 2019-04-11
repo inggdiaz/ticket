@@ -12,17 +12,14 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 Route::group([
     'prefix' => 'employee',
 ], function () {
     Route::get('all', 'EmployeeController@index');
     Route::post('add', 'EmployeeController@store');
     Route::put('add', 'EmployeeController@store');
+    // Route::get('login/{email}/{password}', 'EmployeeController@valid');
+    Route::post('login', 'EmployeeController@login');
 });
 
 
@@ -37,4 +34,5 @@ Route::group([
     Route::put('time', 'TicketController@updateTimes');
     Route::delete('time/{id}', 'TicketController@deletedTime');
     Route::delete('assign/{id}', 'TicketController@deletedAssign');
+    Route::get('report/{from}/{to}', 'TicketController@times');
 });

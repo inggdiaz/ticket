@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Login from './components/Login.vue'
 import Employee from './components/Employee.vue'
 import Ticket from "./components/Ticket";
+import Report from "./components/Report";
 // import store from './store'
 
 Vue.use(Router);
@@ -13,8 +14,8 @@ var router = new Router({
     routes: [
         {
             path: '/',
-            name: 'ticket',
-            component: Ticket,
+            name: 'login',
+            component: Login,
         },{
             path: '/employee',
             name: 'employee',
@@ -25,12 +26,14 @@ var router = new Router({
             component: Ticket,
         },
         {
+            path: '/report',
+            name: 'report',
+            component: Report,
+        },
+        {
             path: '/login',
             name: 'login',
-            component: Login,
-            meta: {
-                libre: true
-            }
+            component: Login
         }
     ]
 });

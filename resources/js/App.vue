@@ -5,6 +5,7 @@
       :clipped="$vuetify.breakpoint.mdAndUp"
       app
       v-model="drawer"
+      v-if="isLogin"
     >
       <v-list dense>
         <template>
@@ -28,7 +29,7 @@
           </v-list-tile>
         </template>
         <template>
-          <v-list-tile :to="{name:''}">
+          <v-list-tile :to="{name:'report'}">
             <v-list-tile-action>
               <v-icon>table_chart</v-icon>
             </v-list-tile-action>
@@ -48,13 +49,13 @@
     >
       <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
         <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-        <span class="hidden-sm-and-down">Sistema</span>
+        <span class="hidden-sm-and-down">Ticket System</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <!-- <v-btn @click="salir" v-if="logueado" icon> -->
-      <v-btn @click="salir" icon>
+      <v-btn @click="salir" v-if="isLogin" icon> <v-icon>logout</v-icon> Exit</v-btn>
+      <!-- <v-btn @click="salir" icon>
         <v-icon>logout</v-icon> Salir
-      </v-btn>
+      </v-btn> -->
       <!-- <v-btn :to="{name: 'login'}" v-else>
         <v-icon>apps</v-icon> Login
       </v-btn> -->
@@ -100,25 +101,16 @@ export default {
     }
   },
   computed: {
-    // logueado(){
-    //   return this.$store.state.usuario;
-    // },
-    // esAdministrador(){
-    //   return this.$store.state.usuario && this.$store.state.usuario.rol =='Administrador';
-    // },
-    // esAlmacenero(){
-    //   return this.$store.state.usuario && this.$store.state.usuario.rol =='Almacenero';
-    // },
-    // esVendedor(){
-    //   return this.$store.state.usuario && this.$store.state.usuario.rol =='Vendedor';
-    // }
+    isLogin(){
+      return this.$store.state.usuario;
+    },
   },
   created(){
-    // this.$store.dispatch("autoLogin");
+    this.$store.dispatch("autoLogin");
   },
   methods:{
     salir(){
-      // this.$store.dispatch("salir");
+      this.$store.dispatch("salir");
     }
   }
 }
