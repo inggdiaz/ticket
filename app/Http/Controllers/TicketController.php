@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Ticket;
 use App\TicketEmployee;
+use App\TicketTime;
 use Illuminate\Http\Request;
 
 class TicketController extends Controller
@@ -19,7 +20,12 @@ class TicketController extends Controller
         $tickets = \App\Ticket::all();
         foreach ($tickets as $ticket) {
             $ticket->assign;
+            $ticket->times;
             foreach ($ticket->assign as $index => $employee) {
+                $employee->employee;
+                $employee->employee->name = $employee->employee->first_name . ' ' . $employee->employee->last_name;
+            }
+            foreach ($ticket->times as $index => $employee) {
                 $employee->employee;
                 $employee->employee->name = $employee->employee->first_name . ' ' . $employee->employee->last_name;
             }
@@ -70,6 +76,20 @@ class TicketController extends Controller
             $assign->ticket_id = $ticket->id;
             $assign->save();
         }
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function saveTimes(Request $request)
+    {
+        $time = new TicketTime();
+        $time->ticket_id = $request->input('ticket_id');
+        $time->employee_id = ((object) $request->input('employee_id'))->id;
+        $time->from = date("Y-m-d H:i:s", strtotime($request->input('date_from')));
+        $time->to = date("Y-m-d H:i:s", strtotime($request->input('date_to')));
+        $time->note = $request->input('note');
+        $time->save();
     }
 
     /**

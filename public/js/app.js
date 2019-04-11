@@ -2681,6 +2681,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   $_veeValidate: {
@@ -2743,8 +2754,10 @@ __webpack_require__.r(__webpack_exports__);
       time: {
         id: 0,
         employee_id: null,
+        ticket_id: null,
         date_from: new Date(),
-        date_to: new Date()
+        date_to: new Date(),
+        note: ''
       },
       menu: false,
       date: new Date().toISOString().substr(0, 10),
@@ -2831,10 +2844,12 @@ __webpack_require__.r(__webpack_exports__);
       this.ticket.description = item.description;
       this.ticket.date = item.date;
       this.ticket.assign = item.assign;
+      this.ticket.times = item.times;
       this.viewDialog = true;
     },
     timeItem: function timeItem(item) {
       this.ticket.id = item.id;
+      this.time.ticket_id = item.id;
       this.ticket.subject = item.subject;
       this.ticket.description = item.description;
       this.ticket.date = item.date;
@@ -2875,7 +2890,7 @@ __webpack_require__.r(__webpack_exports__);
       var self = this;
       console.log(this.ticket); // return;
 
-      this.$validator.validateAll().then(function (result) {
+      this.$validator.validateAll('form-1').then(function (result) {
         if (result) {
           if (self.employee.id > 0) {
             self.employee.change_password = self.employee.old_password === self.employee.password ? 0 : 1;
@@ -2897,26 +2912,27 @@ __webpack_require__.r(__webpack_exports__);
               console.log(response);
             });
           }
+        } else {
+          console.log('Fill');
         }
       });
     },
-    validar: function validar() {
-      this.valida = 0;
-      this.validaMensaje = [];
+    saveTime: function saveTime() {
+      var self = this;
+      console.log(this.ticket); // return;
 
-      if (this.nombre.length < 3 || this.nombre.length > 100) {
-        this.validaMensaje.push("El nombre debe tener más de 3 caracteres y menos de 100 caracteres.");
-      }
-
-      if (!this.tipo_documento) {
-        this.validaMensaje.push("Seleccione un tipo documento.");
-      }
-
-      if (this.validaMensaje.length) {
-        this.valida = 1;
-      }
-
-      return this.valida;
+      this.$validator.validateAll().then(function (result) {
+        if (result) {
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/ticket/time', self.time).then(function (response) {
+            self.closeTime();
+            self.list();
+            self.cleanForm();
+          })["catch"](function (response) {
+            console.log('Error');
+            console.log(response);
+          });
+        }
+      });
     }
   }
 });
@@ -50681,9 +50697,10 @@ var render = function() {
                                           }
                                         ],
                                         attrs: {
+                                          "data-vv-scope": "form-1",
                                           "data-vv-name": "subject",
                                           "error-messages": _vm.errors.collect(
-                                            "subject"
+                                            "form-1.subject"
                                           ),
                                           label: "Subject"
                                         },
@@ -50760,8 +50777,10 @@ var render = function() {
                                                         attrs: {
                                                           "data-vv-name":
                                                             "date",
+                                                          "data-vv-scope":
+                                                            "form-1",
                                                           "error-messages": _vm.errors.collect(
-                                                            "date"
+                                                            "form-1.date"
                                                           ),
                                                           label: "Date",
                                                           "prepend-icon":
@@ -50887,8 +50906,9 @@ var render = function() {
                                           "item-text": "name",
                                           "item-value": "id",
                                           "data-vv-name": "employees",
+                                          "data-vv-scope": "form-1",
                                           "error-messages": _vm.errors.collect(
-                                            "employees"
+                                            "form-1.employees"
                                           ),
                                           items: _vm.employees,
                                           label: "Select Employee(s)...",
@@ -50928,8 +50948,9 @@ var render = function() {
                                           "item-value": "id",
                                           "data-vv-name": "select",
                                           items: _vm.status,
+                                          "data-vv-scope": "form-1",
                                           "error-messages": _vm.errors.collect(
-                                            "select"
+                                            "form-1.select"
                                           ),
                                           required: "",
                                           label: "Status"
@@ -50965,8 +50986,9 @@ var render = function() {
                                         ],
                                         attrs: {
                                           "data-vv-name": "description",
+                                          "data-vv-scope": "form-1",
                                           "error-messages": _vm.errors.collect(
-                                            "description"
+                                            "form-1.description"
                                           ),
                                           solo: "",
                                           name: "input-7-4",
@@ -51117,155 +51139,20 @@ var render = function() {
                                     "v-flex",
                                     { attrs: { xs12: "", sm6: "", md6: "" } },
                                     [
-                                      _c(
-                                        "v-menu",
-                                        {
-                                          ref: "menu",
-                                          attrs: {
-                                            "close-on-content-click": false,
-                                            "nudge-right": 40,
-                                            "return-value": _vm.ticket.date,
-                                            lazy: "",
-                                            transition: "scale-transition",
-                                            "offset-y": "",
-                                            "full-width": "",
-                                            "min-width": "290px"
-                                          },
-                                          on: {
-                                            "update:returnValue": function(
-                                              $event
-                                            ) {
-                                              return _vm.$set(
-                                                _vm.ticket,
-                                                "date",
-                                                $event
-                                              )
-                                            },
-                                            "update:return-value": function(
-                                              $event
-                                            ) {
-                                              return _vm.$set(
-                                                _vm.ticket,
-                                                "date",
-                                                $event
-                                              )
-                                            }
-                                          },
-                                          scopedSlots: _vm._u([
-                                            {
-                                              key: "activator",
-                                              fn: function(ref) {
-                                                var on = ref.on
-                                                return [
-                                                  _c(
-                                                    "v-text-field",
-                                                    _vm._g(
-                                                      {
-                                                        attrs: {
-                                                          disabled: "",
-                                                          label: "Date",
-                                                          "prepend-icon":
-                                                            "event",
-                                                          readonly: ""
-                                                        },
-                                                        model: {
-                                                          value:
-                                                            _vm.ticket.date,
-                                                          callback: function(
-                                                            $$v
-                                                          ) {
-                                                            _vm.$set(
-                                                              _vm.ticket,
-                                                              "date",
-                                                              $$v
-                                                            )
-                                                          },
-                                                          expression:
-                                                            "ticket.date"
-                                                        }
-                                                      },
-                                                      on
-                                                    )
-                                                  )
-                                                ]
-                                              }
-                                            }
-                                          ]),
-                                          model: {
-                                            value: _vm.menu,
-                                            callback: function($$v) {
-                                              _vm.menu = $$v
-                                            },
-                                            expression: "menu"
-                                          }
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          disabled: "",
+                                          label: "Date",
+                                          "prepend-icon": "event"
                                         },
-                                        [
-                                          _vm._v(" "),
-                                          _c(
-                                            "v-date-picker",
-                                            {
-                                              attrs: {
-                                                "no-title": "",
-                                                scrollable: ""
-                                              },
-                                              model: {
-                                                value: _vm.ticket.date,
-                                                callback: function($$v) {
-                                                  _vm.$set(
-                                                    _vm.ticket,
-                                                    "date",
-                                                    $$v
-                                                  )
-                                                },
-                                                expression: "ticket.date"
-                                              }
-                                            },
-                                            [
-                                              _c("v-spacer"),
-                                              _vm._v(" "),
-                                              _c(
-                                                "v-btn",
-                                                {
-                                                  attrs: {
-                                                    flat: "",
-                                                    color: "primary"
-                                                  },
-                                                  on: {
-                                                    click: function($event) {
-                                                      _vm.menu = false
-                                                    }
-                                                  }
-                                                },
-                                                [_vm._v("Cancel")]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "v-btn",
-                                                {
-                                                  attrs: {
-                                                    flat: "",
-                                                    color: "primary"
-                                                  },
-                                                  on: {
-                                                    click: function($event) {
-                                                      return _vm.$refs.menu.save(
-                                                        _vm.ticket.date
-                                                      )
-                                                    }
-                                                  }
-                                                },
-                                                [
-                                                  _vm._v(
-                                                    "OK\n                                            "
-                                                  )
-                                                ]
-                                              )
-                                            ],
-                                            1
-                                          )
-                                        ],
-                                        1
-                                      )
+                                        model: {
+                                          value: _vm.ticket.date,
+                                          callback: function($$v) {
+                                            _vm.$set(_vm.ticket, "date", $$v)
+                                          },
+                                          expression: "ticket.date"
+                                        }
+                                      })
                                     ],
                                     1
                                   ),
@@ -51346,18 +51233,204 @@ var render = function() {
                                                   "v-tab-item",
                                                   { key: 1 },
                                                   [
-                                                    _c(
-                                                      "v-card",
-                                                      { attrs: { flat: "" } },
-                                                      [
-                                                        _c("v-card-text", [
-                                                          _vm._v(" Times")
+                                                    [
+                                                      _c("v-data-table", {
+                                                        staticClass:
+                                                          "elevation-1",
+                                                        attrs: {
+                                                          headers:
+                                                            _vm.headersAssign,
+                                                          items:
+                                                            _vm.ticket.times
+                                                        },
+                                                        scopedSlots: _vm._u([
+                                                          {
+                                                            key: "items",
+                                                            fn: function(
+                                                              props
+                                                            ) {
+                                                              return [
+                                                                _c("td", [
+                                                                  _vm._v(
+                                                                    _vm._s(
+                                                                      props.item
+                                                                        .employee
+                                                                        .first_name
+                                                                    )
+                                                                  )
+                                                                ]),
+                                                                _vm._v(" "),
+                                                                _c("td", [
+                                                                  _vm._v(
+                                                                    _vm._s(
+                                                                      props.item
+                                                                        .employee
+                                                                        .last_name
+                                                                    )
+                                                                  )
+                                                                ]),
+                                                                _vm._v(" "),
+                                                                _c("td", [
+                                                                  _vm._v(
+                                                                    _vm._s(
+                                                                      props.item
+                                                                        .employee
+                                                                        .email
+                                                                    )
+                                                                  )
+                                                                ]),
+                                                                _vm._v(" "),
+                                                                _c(
+                                                                  "td",
+                                                                  [
+                                                                    _c(
+                                                                      "v-tooltip",
+                                                                      {
+                                                                        attrs: {
+                                                                          bottom:
+                                                                            ""
+                                                                        },
+                                                                        scopedSlots: _vm._u(
+                                                                          [
+                                                                            {
+                                                                              key:
+                                                                                "activator",
+                                                                              fn: function(
+                                                                                ref
+                                                                              ) {
+                                                                                var on =
+                                                                                  ref.on
+                                                                                return [
+                                                                                  _c(
+                                                                                    "v-icon",
+                                                                                    _vm._g(
+                                                                                      {
+                                                                                        staticClass:
+                                                                                          "mr-2",
+                                                                                        attrs: {
+                                                                                          small:
+                                                                                            ""
+                                                                                        },
+                                                                                        on: {
+                                                                                          click: function(
+                                                                                            $event
+                                                                                          ) {
+                                                                                            return _vm.viewItem(
+                                                                                              props.item
+                                                                                            )
+                                                                                          }
+                                                                                        }
+                                                                                      },
+                                                                                      on
+                                                                                    ),
+                                                                                    [
+                                                                                      _vm._v(
+                                                                                        "\n                                                                                pageview\n                                                                            "
+                                                                                      )
+                                                                                    ]
+                                                                                  )
+                                                                                ]
+                                                                              }
+                                                                            }
+                                                                          ],
+                                                                          null,
+                                                                          true
+                                                                        )
+                                                                      },
+                                                                      [
+                                                                        _vm._v(
+                                                                          " "
+                                                                        ),
+                                                                        _c(
+                                                                          "span",
+                                                                          [
+                                                                            _vm._v(
+                                                                              "View"
+                                                                            )
+                                                                          ]
+                                                                        )
+                                                                      ]
+                                                                    ),
+                                                                    _vm._v(" "),
+                                                                    _c(
+                                                                      "v-tooltip",
+                                                                      {
+                                                                        attrs: {
+                                                                          bottom:
+                                                                            ""
+                                                                        },
+                                                                        scopedSlots: _vm._u(
+                                                                          [
+                                                                            {
+                                                                              key:
+                                                                                "activator",
+                                                                              fn: function(
+                                                                                ref
+                                                                              ) {
+                                                                                var on =
+                                                                                  ref.on
+                                                                                return [
+                                                                                  _c(
+                                                                                    "v-icon",
+                                                                                    _vm._g(
+                                                                                      {
+                                                                                        staticClass:
+                                                                                          "mr-2",
+                                                                                        attrs: {
+                                                                                          small:
+                                                                                            ""
+                                                                                        },
+                                                                                        on: {
+                                                                                          click: function(
+                                                                                            $event
+                                                                                          ) {
+                                                                                            return _vm.editItem(
+                                                                                              props.item
+                                                                                            )
+                                                                                          }
+                                                                                        }
+                                                                                      },
+                                                                                      on
+                                                                                    ),
+                                                                                    [
+                                                                                      _vm._v(
+                                                                                        "\n                                                                                delete_forever\n                                                                            "
+                                                                                      )
+                                                                                    ]
+                                                                                  )
+                                                                                ]
+                                                                              }
+                                                                            }
+                                                                          ],
+                                                                          null,
+                                                                          true
+                                                                        )
+                                                                      },
+                                                                      [
+                                                                        _vm._v(
+                                                                          " "
+                                                                        ),
+                                                                        _c(
+                                                                          "span",
+                                                                          [
+                                                                            _vm._v(
+                                                                              "Delete"
+                                                                            )
+                                                                          ]
+                                                                        )
+                                                                      ]
+                                                                    )
+                                                                  ],
+                                                                  1
+                                                                )
+                                                              ]
+                                                            }
+                                                          }
                                                         ])
-                                                      ],
-                                                      1
-                                                    )
+                                                      })
+                                                    ]
                                                   ],
-                                                  1
+                                                  2
                                                 ),
                                                 _vm._v(" "),
                                                 _c(
@@ -51456,7 +51529,7 @@ var render = function() {
                                                                                     ),
                                                                                     [
                                                                                       _vm._v(
-                                                                                        "pageview"
+                                                                                        "\n                                                                                pageview\n                                                                            "
                                                                                       )
                                                                                     ]
                                                                                   )
@@ -51525,7 +51598,7 @@ var render = function() {
                                                                                     ),
                                                                                     [
                                                                                       _vm._v(
-                                                                                        "delete_forever"
+                                                                                        "\n                                                                                delete_forever\n                                                                            "
                                                                                       )
                                                                                     ]
                                                                                   )
@@ -51668,155 +51741,20 @@ var render = function() {
                                     "v-flex",
                                     { attrs: { xs12: "", sm6: "", md6: "" } },
                                     [
-                                      _c(
-                                        "v-menu",
-                                        {
-                                          ref: "menu",
-                                          attrs: {
-                                            "close-on-content-click": false,
-                                            "nudge-right": 40,
-                                            "return-value": _vm.ticket.date,
-                                            lazy: "",
-                                            transition: "scale-transition",
-                                            "offset-y": "",
-                                            "full-width": "",
-                                            "min-width": "290px"
-                                          },
-                                          on: {
-                                            "update:returnValue": function(
-                                              $event
-                                            ) {
-                                              return _vm.$set(
-                                                _vm.ticket,
-                                                "date",
-                                                $event
-                                              )
-                                            },
-                                            "update:return-value": function(
-                                              $event
-                                            ) {
-                                              return _vm.$set(
-                                                _vm.ticket,
-                                                "date",
-                                                $event
-                                              )
-                                            }
-                                          },
-                                          scopedSlots: _vm._u([
-                                            {
-                                              key: "activator",
-                                              fn: function(ref) {
-                                                var on = ref.on
-                                                return [
-                                                  _c(
-                                                    "v-text-field",
-                                                    _vm._g(
-                                                      {
-                                                        attrs: {
-                                                          disabled: "",
-                                                          label: "Date",
-                                                          "prepend-icon":
-                                                            "event",
-                                                          readonly: ""
-                                                        },
-                                                        model: {
-                                                          value:
-                                                            _vm.ticket.date,
-                                                          callback: function(
-                                                            $$v
-                                                          ) {
-                                                            _vm.$set(
-                                                              _vm.ticket,
-                                                              "date",
-                                                              $$v
-                                                            )
-                                                          },
-                                                          expression:
-                                                            "ticket.date"
-                                                        }
-                                                      },
-                                                      on
-                                                    )
-                                                  )
-                                                ]
-                                              }
-                                            }
-                                          ]),
-                                          model: {
-                                            value: _vm.menu,
-                                            callback: function($$v) {
-                                              _vm.menu = $$v
-                                            },
-                                            expression: "menu"
-                                          }
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          disabled: "",
+                                          label: "Date",
+                                          "prepend-icon": "event"
                                         },
-                                        [
-                                          _vm._v(" "),
-                                          _c(
-                                            "v-date-picker",
-                                            {
-                                              attrs: {
-                                                "no-title": "",
-                                                scrollable: ""
-                                              },
-                                              model: {
-                                                value: _vm.ticket.date,
-                                                callback: function($$v) {
-                                                  _vm.$set(
-                                                    _vm.ticket,
-                                                    "date",
-                                                    $$v
-                                                  )
-                                                },
-                                                expression: "ticket.date"
-                                              }
-                                            },
-                                            [
-                                              _c("v-spacer"),
-                                              _vm._v(" "),
-                                              _c(
-                                                "v-btn",
-                                                {
-                                                  attrs: {
-                                                    flat: "",
-                                                    color: "primary"
-                                                  },
-                                                  on: {
-                                                    click: function($event) {
-                                                      _vm.menu = false
-                                                    }
-                                                  }
-                                                },
-                                                [_vm._v("Cancel")]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "v-btn",
-                                                {
-                                                  attrs: {
-                                                    flat: "",
-                                                    color: "primary"
-                                                  },
-                                                  on: {
-                                                    click: function($event) {
-                                                      return _vm.$refs.menu.save(
-                                                        _vm.ticket.date
-                                                      )
-                                                    }
-                                                  }
-                                                },
-                                                [
-                                                  _vm._v(
-                                                    "OK\n                                            "
-                                                  )
-                                                ]
-                                              )
-                                            ],
-                                            1
-                                          )
-                                        ],
-                                        1
-                                      )
+                                        model: {
+                                          value: _vm.ticket.date,
+                                          callback: function($$v) {
+                                            _vm.$set(_vm.ticket, "date", $$v)
+                                          },
+                                          expression: "ticket.date"
+                                        }
+                                      })
                                     ],
                                     1
                                   ),
@@ -51882,7 +51820,7 @@ var render = function() {
                                         ],
                                         attrs: {
                                           "item-text": "employee.name",
-                                          "item-value": "employee_id",
+                                          "item-value": "employee.id",
                                           "data-vv-name": "employees",
                                           "error-messages": _vm.errors.collect(
                                             "employees"
@@ -51942,6 +51880,41 @@ var render = function() {
                                       })
                                     ],
                                     1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { x12: "", sm12: "", md12: "" } },
+                                    [
+                                      _c("v-textarea", {
+                                        directives: [
+                                          {
+                                            name: "validate",
+                                            rawName: "v-validate",
+                                            value: "required",
+                                            expression: "'required'"
+                                          }
+                                        ],
+                                        attrs: {
+                                          "data-vv-name": "note",
+                                          "error-messages": _vm.errors.collect(
+                                            "note"
+                                          ),
+                                          solo: "",
+                                          name: "input-7-4",
+                                          label: "Note",
+                                          value: ""
+                                        },
+                                        model: {
+                                          value: _vm.time.note,
+                                          callback: function($$v) {
+                                            _vm.$set(_vm.time, "note", $$v)
+                                          },
+                                          expression: "time.note"
+                                        }
+                                      })
+                                    ],
+                                    1
                                   )
                                 ],
                                 1
@@ -51957,6 +51930,19 @@ var render = function() {
                         "v-card-actions",
                         [
                           _c("v-spacer"),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "success" },
+                              nativeOn: {
+                                click: function($event) {
+                                  return _vm.saveTime($event)
+                                }
+                              }
+                            },
+                            [_vm._v("Save")]
+                          ),
                           _vm._v(" "),
                           _c(
                             "v-btn",
@@ -52007,8 +51993,9 @@ var render = function() {
                           return _c("v-chip", [
                             _vm._v(
                               _vm._s(assign.employee.first_name) +
-                                " " +
-                                _vm._s(assign.employee.last_name)
+                                "\n                        " +
+                                _vm._s(assign.employee.last_name) +
+                                "\n                    "
                             )
                           ])
                         }),
@@ -52170,7 +52157,11 @@ var render = function() {
                                             },
                                             on
                                           ),
-                                          [_vm._v("delete_forever")]
+                                          [
+                                            _vm._v(
+                                              "delete_forever\n                            "
+                                            )
+                                          ]
                                         )
                                       ]
                                     }
@@ -93070,8 +93061,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuetify__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./App.vue */ "./resources/js/App.vue");
 /* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./router */ "./resources/js/router.js");
-/* harmony import */ var vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuetify-datetime-picker */ "./node_modules/vuetify-datetime-picker/dist/index.js");
-/* harmony import */ var vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify-datetime-picker */ "./node_modules/vuetify-datetime-picker/dist/index.js");
+/* harmony import */ var vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/dist/vuetify.min.css */ "./node_modules/vuetify/dist/vuetify.min.css");
 /* harmony import */ var vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vee_validate__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vee-validate */ "./node_modules/vee-validate/dist/vee-validate.esm.js");
@@ -93093,7 +93084,7 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 Vue.use(vuetify__WEBPACK_IMPORTED_MODULE_0___default.a);
 Vue.use(vee_validate__WEBPACK_IMPORTED_MODULE_5__["default"]);
-Vue.use(vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_3___default.a);
+Vue.use(vuetify_datetime_picker__WEBPACK_IMPORTED_MODULE_6___default.a);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

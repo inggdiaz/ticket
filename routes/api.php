@@ -33,4 +33,5 @@ Route::group([
     Route::get('status', 'TicketController@status');
     Route::post('add', 'TicketController@store');
     Route::put('add', 'TicketController@store');
+    Route::post('time', 'TicketController@saveTimes');
 });
